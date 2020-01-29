@@ -2,11 +2,12 @@
 #include <iostream>
 #include <cmath>
 
-int fin::angle = 0;
+double fin::angle = 5;
 int fin::res = 500;
 
 fin::fin(QWidget *parent, int off) : QWidget(parent)
 {
+    grab = 0;
     offset = off;
     inner_res = res/1.5;
     span = 40;
@@ -46,12 +47,24 @@ void fin::mousePressEvent(QMouseEvent *event)
     }
 }
 
+void fin::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        grab = 0;
+    }
+}
+
 void fin::mouseMoveEvent(QMouseEvent *event)
 {
     if (grab)
     {
-        angle+=grab_angle-calc_angle(event->pos());
+        double delta = calc_angle(event->pos());
+        angle+=delta-grab_angle;
+        grab_angle=delta;
         this->repaint();
+    } else {
+        event->ignore();
     }
 }
 
@@ -69,7 +82,12 @@ void fin::make_path()
 
 double fin::calc_angle(QPoint c)
 {
-    return sqrt(pow(c.x()-res/2, 2)+pow(c.y()-res/2, 2));
+    double x = c.x()-(res/2);
+    double ang = (atan(((c.y()*-1)+(res/2))/x)*180)/3.14159;
+    if (c.x() < 250) {
+        ang+=180;
+    }
+    return ang;
 }
 
 QSize fin::sizeHint() const

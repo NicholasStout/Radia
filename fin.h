@@ -8,11 +8,11 @@ class fin : public QWidget
 {
     Q_OBJECT
 public:
-    static int angle;
+    static double angle;
     int span;
     static int res;
     int offset;
-    int loc_angle;
+    double loc_angle;
     double inner_res;
     QRectF bound;
     QRectF bound2;
@@ -25,6 +25,7 @@ public:
     QPainterPath center;
 
     void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
     void make_path();
     void mouseMoveEvent(QMouseEvent *event);
     double calc_angle(QPoint c);
