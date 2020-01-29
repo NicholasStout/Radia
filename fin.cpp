@@ -1,14 +1,19 @@
 #include "fin.h"
 #include <iostream>
+#include <cmath>
 
-fin::fin(QWidget *parent) : QWidget(parent)
+int fin::angle = 0;
+int fin::res = 500;
+
+fin::fin(QWidget *parent, int off) : QWidget(parent)
 {
-    res = 260;
-    angle =30;
-    span = 80;
-    bound = QRectF(res * 0.75, res * 0.75, res * 1.5, res * 1.5);
-    setGeometry(0,0, 1920, 1080);
-    //make_path();
+    offset = off;
+    inner_res = res/1.5;
+    span = 40;
+    bound = QRectF(0,0,res,res);
+    bound2 = QRectF((inner_res*.25), (inner_res*.25),inner_res, inner_res);
+    setGeometry(0,0, res, res);
+    make_path();
 }
 
 void fin::paintEvent(QPaintEvent *)
@@ -20,7 +25,7 @@ void fin::paintEvent(QPaintEvent *)
     painter.setPen(Qt::NoPen);
     painter.setBrush(c);
     painter.drawPath(center);
-    //painter.end();
+    painter.end();
 }
 
 void fin::mousePressEvent(QMouseEvent *event)
@@ -32,6 +37,7 @@ void fin::mousePressEvent(QMouseEvent *event)
         if (center.contains(p))
         {
             grab = 1;
+            grab_angle = calc_angle(event->pos());
         }
         else
         {
@@ -44,7 +50,7 @@ void fin::mouseMoveEvent(QMouseEvent *event)
 {
     if (grab)
     {
-        angle+=30;
+        angle+=grab_angle-calc_angle(event->pos());
         this->repaint();
     }
 }
@@ -52,12 +58,18 @@ void fin::mouseMoveEvent(QMouseEvent *event)
 void fin::make_path()
 {
     //center.~QPainterPath();
+    loc_angle =angle+offset;
     center = QPainterPath();
-    center.arcMoveTo(bound, angle);
-    center.arcTo(bound, angle, span);
-    center.arcTo(-res, -res, res * 2, res * 2, (span+angle), -span);
+    center.arcMoveTo(bound, loc_angle);
+    center.arcTo(bound, loc_angle, span);
+    center.arcTo(bound2, (span+loc_angle), -span);
     center.closeSubpath();
     center.setFillRule(Qt::WindingFill);
+}
+
+double fin::calc_angle(QPoint c)
+{
+    return sqrt(pow(c.x()-res/2, 2)+pow(c.y()-res/2, 2));
 }
 
 QSize fin::sizeHint() const

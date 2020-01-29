@@ -14,16 +14,22 @@ Radia::Radia(QWidget *parent) :
     //set screen invisble and frameless
 
     QRect off = QApplication::desktop()->screenGeometry(this);
-    QRect screen = QApplication::desktop()->availableGeometry(this);
+    int h, w;
+    h = w = 0;
+    for (QScreen * s : QGuiApplication::screens()) {
+        QRect screen = s->availableGeometry();
+        h+=screen.height();
+        w+=screen.width();
+    }
 
-    QSize *size = new QSize(screen.height(), screen.width());
+    QSize *size = new QSize(h, w);
 
     //Get demensions for the launcher
 
     QRect *start = new QRect(QPoint(0,0), *size);
     setGeometry(*start);
-    setFixedHeight(screen.height());
-    setFixedWidth(screen.width());
+    setFixedHeight(h);
+    setFixedWidth(w);
     m = Model();
 }
 

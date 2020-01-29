@@ -8,13 +8,18 @@ class fin : public QWidget
 {
     Q_OBJECT
 public:
-    int angle;
+    static int angle;
     int span;
-    int res;
+    static int res;
+    int offset;
+    int loc_angle;
+    double inner_res;
     QRectF bound;
+    QRectF bound2;
     QRect container;
     int grab;
-    explicit fin(QWidget *parent = nullptr);
+    double grab_angle;
+    explicit fin(QWidget *parent = nullptr, int off = 0);
     void paintEvent(QPaintEvent *);
     void setContainer(QRect box) {container = box;}
     QPainterPath center;
@@ -22,6 +27,7 @@ public:
     void mousePressEvent(QMouseEvent *event);
     void make_path();
     void mouseMoveEvent(QMouseEvent *event);
+    double calc_angle(QPoint c);
     QSize sizeHint() const;
     ~fin();
 
