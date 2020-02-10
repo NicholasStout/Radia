@@ -1,6 +1,8 @@
 #include "radia.h"
 #include "model.h"
 #include "search.h"
+#include "fin.h"
+#include "radia_layout.h"
 #include <QtWidgets>
 
 /*
@@ -22,6 +24,16 @@ Radia::Radia(QWidget *parent) :
         w+=screen.width();
     }
 
+    Radia_Layout *l = new Radia_Layout;
+    fin *f = new fin(this);
+    l->addWidget(f);
+    for (int i = 0; i < 30; i++) {
+        fin *g = new fin(f);
+        l->addWidget(g);
+        f = g;
+    }
+    //setLayout(l);
+
     QSize *size = new QSize(h, w);
 
     //Get demensions for the launcher
@@ -30,7 +42,6 @@ Radia::Radia(QWidget *parent) :
     setGeometry(*start);
     setFixedHeight(h);
     setFixedWidth(w);
-    m = Model();
 }
 
 
@@ -42,7 +53,7 @@ void Radia::paintEvent(QPaintEvent *)
     painter.setPen(Qt::NoPen);
     painter.setBrush(c);
     QPainterPath center;
-    //painter.drawPath(center);
+    painter.drawPath(center);
     painter.end();
 }
 

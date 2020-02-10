@@ -1,26 +1,33 @@
 #include "model.h"
 #include <string>
 
-Model::Model()
+/*
+ * This is a model under the MVC design pattern, as well as acting as a factory for the fin Objects, which are their own controllers.
+ * This objects creats fins based on what programs they are to run, as well as adding and hiding objects as they are needed.
+ */
+
+Model::Model(Radia_Layout * l) : QObject(nullptr)
 {
-    s.curr_stage = begin;
-    s.img = NULL;
-    s.name = NULL;
+    event_id = QEvent::registerEventType();
+    populate_list();
 }
 
-int Model::get_angle(int x, int y)
+void Model::move_left()
 {
- return x+y; //temp to make warning go away
-}
 
-Model::state* Model::get_state()
-{
-    return &s;
 }
+void Model::move_right()
+{
 
-Model::state* Model::reg_click(int x, int y)
-{
-    x+y;
-    return &s;
 }
+bool Model::event(QEvent * e)
+{
+    if (int(e->type()) == event_id)
+        return true;
+}
+void Model::populate_list()
+{
+
+}
+Model::~Model(){}
 

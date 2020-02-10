@@ -14,12 +14,10 @@ class Radia : public QMainWindow
 
 public:
     QRect container;
-    Model m;
     QPainter * painter;
     fin f;
 
     explicit Radia(QWidget *parent = nullptr);
-    void set_state(Model::state * s);
     void begin_state(std::string * img, std::string * name);
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent * event);

@@ -1,28 +1,29 @@
 #ifndef MODEL_H
 #define MODEL_H
 #include <string>
+#include <QWidget>
+#include <QtWidgets>
+#include <QEvent>
+#include "fin.h"
+#include "radia_layout.h"
 
-class Model
+class Model : public QObject
 {
 public:
-    enum stage{
-        end,
-        begin
-    };
-    typedef struct state
-    {
-        stage curr_stage;
-        std::string *img;
-        std::string *name;
-    };
 
-    state s = {end, NULL, NULL};
+    explicit Model(Radia_Layout * l);
+    ~Model();
+private:
+    QStack<fin *> fin_stack;
+    QStack<fin *> fout_stack;
+    QList<fin *> visible;
+    Radia_Layout * layout;
+    int event_id;
 
-    Model();
-    int get_angle(int x, int y);
-    state * reg_click(int x, int y);
-    state * get_state();
-
+    void move_left();
+    void move_right();
+    void populate_list();
+    bool event(QEvent * e);
 };
 
 #endif // MODEL_H

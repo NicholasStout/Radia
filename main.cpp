@@ -1,16 +1,13 @@
 #include "radia.h"
 #include "fin.h"
+#include "radia_layout.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    Radia w;
-    w.show();
-    fin f(&w, 0);
-    f.show();
-    fin g(&f, 45);
-    g.show();
+    Radia *w = new Radia;
+    w->show();
 
     return a.exec();
 }
