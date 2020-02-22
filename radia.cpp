@@ -24,15 +24,8 @@ Radia::Radia(QWidget *parent) :
         w+=screen.width();
     }
 
-    Radia_Layout *l = new Radia_Layout;
-    fin *f = new fin(this);
-    l->addWidget(f);
-    for (int i = 0; i < 30; i++) {
-        fin *g = new fin(f);
-        l->addWidget(g);
-        f = g;
-    }
-    //setLayout(l);
+    l = new Radia_Layout;
+    m = new Model(l, this);
 
     QSize *size = new QSize(h, w);
 

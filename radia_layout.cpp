@@ -8,16 +8,14 @@ Radia_Layout::Radia_Layout() :
 }
 void Radia_Layout::addItem(QLayoutItem *item)
 {
-    fin *f = (fin*) item->widget();
+    item->widget()->show();
     list.append(item);
-
 }
 
 void Radia_Layout::addWidget(QWidget *w)
 {
     fin* f =(fin*) w;
-    f->offset = count_w*angle;
-    count_w++;
+    f->show();
     addItem(new QWidgetItem(w));
 }
 
@@ -42,6 +40,12 @@ void Radia_Layout::setGeometry(const QRect &r)
 int Radia_Layout::count() const
 {
     return list.size();
+}
+
+bool Radia_Layout::can_add_fin()
+{
+    printf("%d\n", list.size());
+    return (list.size() < (180/angle));
 }
 
 QSize Radia_Layout::sizeHint() const

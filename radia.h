@@ -16,6 +16,8 @@ public:
     QRect container;
     QPainter * painter;
     fin f;
+    Radia_Layout *l;
+    Model * m;
 
     explicit Radia(QWidget *parent = nullptr);
     void begin_state(std::string * img, std::string * name);

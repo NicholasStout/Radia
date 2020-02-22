@@ -11,7 +11,7 @@ class Model : public QObject
 {
 public:
 
-    explicit Model(Radia_Layout * l);
+    explicit Model(Radia_Layout * l, QWidget * parent);
     ~Model();
 private:
     QStack<fin *> fin_stack;
@@ -19,6 +19,9 @@ private:
     QList<fin *> visible;
     Radia_Layout * layout;
     int event_id;
+    double * angle;
+    int prev_angle;
+    QWidget * p;
 
     void move_left();
     void move_right();

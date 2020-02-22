@@ -1,6 +1,7 @@
 #include "fin.h"
 #include <iostream>
 #include <cmath>
+#include <string>
 
 double fin::angle = 5;
 int fin::res = 500;
@@ -27,7 +28,7 @@ void fin::paintEvent(QPaintEvent *)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     QColor c(127, 0, 127);
-    painter.setPen(Qt::NoPen);
+    //painter.setPen(Qt::NoPen);
     painter.setBrush(c);
     painter.drawPath(center);
     QRectF source(0.0, 0.0, 64, 64);
@@ -35,10 +36,11 @@ void fin::paintEvent(QPaintEvent *)
     QRectF target = center_img(image);
     circle = QPainterPath();
     circle.arcTo(target, 0, 360);
-    painter.setClipPath(circle);
-    if (!off){
-        painter.drawImage(target, image, source);
-    }
+    //painter.setClipPath(circle);
+    //painter.drawImage(target, image, source);
+    QString ang_string;
+    ang_string.setNum(angle);
+    painter.drawText(target, Qt::AlignCenter, ang_string);
     painter.end();
 }
 
@@ -52,6 +54,7 @@ void fin::mousePressEvent(QMouseEvent *event)
         {
             grab = 1;
             grab_angle = calc_angle(event->pos());
+            event->accept();
         }
         else
         {
@@ -65,6 +68,7 @@ void fin::mouseReleaseEvent(QMouseEvent *event)
     if (event->button() == Qt::LeftButton)
     {
         grab = 0;
+        event->ignore();
     }
 }
 
@@ -72,12 +76,14 @@ void fin::mouseMoveEvent(QMouseEvent *event)
 {
     if (grab)
     {
+        //angle = calc_angle(event->pos());
         double delta = calc_angle(event->pos());
-        angle+=delta-grab_angle;
+        angle+=round(delta-grab_angle);
         grab_angle=delta;
-        angle = int(angle) % 360;
+        angle = int(angle+360) % 360;
         QCoreApplication::postEvent(m, new QEvent(QEvent::Type(event_id)));
         this->repaint();
+        event->accept();
     } else {
         event->ignore();
     }
@@ -87,23 +93,11 @@ void fin::make_path()
 {
     loc_angle =angle+offset;
     center = QPainterPath();
-    if (loc_angle < 140 && loc_angle >= 0)
-    {
-        center.arcMoveTo(bound, loc_angle);
-        center.arcTo(bound, loc_angle, span);
-        center.arcTo(bound2, (span+loc_angle), -span);
-        center.closeSubpath();
-        center.setFillRule(Qt::WindingFill);
-        if (ang_check > 0)
-        {
-            off = false;
-            //printf("%d\n", grab);
-        }
-    }
-    else
-    {
-        off = true;
-    }
+    center.arcMoveTo(bound, loc_angle);
+    center.arcTo(bound, loc_angle, span);
+    center.arcTo(bound2, (span+loc_angle), -span);
+    center.closeSubpath();
+    center.setFillRule(Qt::WindingFill);
 }
 
 double fin::calc_angle(QPoint c)
@@ -112,6 +106,8 @@ double fin::calc_angle(QPoint c)
     double ang = rad_to_deg(atan(((c.y()*-1)+(res/2))/x)); //Mmmm Pi
     if (c.x() < res/2) {
         ang+=180;
+    } else if (c.y() >= (res/2.0)) {
+        ang+=360;
     }
     return ang;
 }

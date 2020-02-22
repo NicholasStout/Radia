@@ -20,6 +20,7 @@ public:
     QLayoutItem * itemAt(int index) const;
     QLayoutItem * takeAt(int index);
     int count() const;
+    bool can_add_fin();
 
 private:
     QList<QLayoutItem*> list;
