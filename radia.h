@@ -23,6 +23,7 @@ public:
     void begin_state(std::string * img, std::string * name);
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent * event);
+    void mouseMoveEvent(QMouseEvent *event);
     ~Radia();
 
 private:

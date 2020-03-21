@@ -1,5 +1,10 @@
 #include "radia_layout.h"
 
+/*
+ *  This class serves as a layout for the fins. In QT, a layout is important for automatic loading and placement of apps. This class overrides this functionality
+ *  in order to lay the widgets on top of one another. This is necessary as they much be the same size and in the same position to draw and rotate correctly.
+ * */
+
 Radia_Layout::Radia_Layout() :
     QLayout(nullptr)
 {

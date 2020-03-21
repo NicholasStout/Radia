@@ -37,6 +37,11 @@ Radia::Radia(QWidget *parent) :
     setFixedWidth(w);
 }
 
+void Radia::mouseMoveEvent(QMouseEvent *event)
+{
+    printf("Oh yeah, it's all coming together\n");
+    event->ignore();
+}
 
 void Radia::paintEvent(QPaintEvent *)
 {

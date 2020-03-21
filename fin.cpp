@@ -3,6 +3,10 @@
 #include <cmath>
 #include <string>
 
+/*
+ * This class is to be the radial widget that encircles the center widget. When this widget is clicked, the program it is representing launches.
+ * */
+
 double fin::angle = 5;
 int fin::res = 500;
 int fin::x = 0;
@@ -74,19 +78,19 @@ void fin::mouseReleaseEvent(QMouseEvent *event)
 
 void fin::mouseMoveEvent(QMouseEvent *event)
 {
-    if (grab)
-    {
-        //angle = calc_angle(event->pos());
-        double delta = calc_angle(event->pos());
-        angle+=round(delta-grab_angle);
-        grab_angle=delta;
-        angle = int(angle+360) % 360;
-        QCoreApplication::postEvent(m, new QEvent(QEvent::Type(event_id)));
-        this->repaint();
-        event->accept();
-    } else {
+//    if (grab)
+//    {
+//        //angle = calc_angle(event->pos());
+//        double delta = calc_angle(event->pos());
+//        angle+=round(delta-grab_angle);
+//        grab_angle=delta;
+//        angle = int(angle+360) % 360;
+//        QCoreApplication::postEvent(m, new QEvent(QEvent::Type(event_id)));
+//        this->repaint();
+//        //event->accept();
+//    } else {
         event->ignore();
-    }
+//    }
 }
 
 void fin::make_path()

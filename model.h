@@ -27,6 +27,7 @@ private:
     void move_right();
     void populate_list();
     bool event(QEvent * e);
+    void mouseMoveEvent(QMouseEvent *event);
 };
 
 #endif // MODEL_H

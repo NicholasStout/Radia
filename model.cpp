@@ -76,6 +76,13 @@ bool Model::event(QEvent * e)
     e->ignore();
     return false;
 }
+
+void Model::mouseMoveEvent(QMouseEvent *event)
+{
+    printf("Oh yeah, it's all coming together\n");
+    event->ignore();
+}
+
 void Model::populate_list()
 {
     fin * f = new fin(p, event_id, this);
