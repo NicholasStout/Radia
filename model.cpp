@@ -60,16 +60,17 @@ bool Model::event(QEvent * e)
 {
     if (int(e->type()) == event_id)
     {
-        int delta;
-        if (*angle)
-        if (*angle >= (prev_angle+layout->angle)%360)
+        //printf("%d, ", int(visible.first()->loc_angle) % 360);
+        if (int(visible.last()->loc_angle)%360 > 180)
         {
-            //move_left();
-            prev_angle = int(*angle);
-        } else if (abs(*angle-prev_angle) >= layout->angle)
+            move_left();
+            printf("pass\n");
+            //prev_angle = int(*angle);
+        } else if ((int(visible.first()->loc_angle) % 360) == 340)
         {
-            //move_right();
-            prev_angle = int(*angle);
+            printf("pass right\n");
+            move_right();
+            //prev_angle = int(*angle);
         }
         return true;
     }
@@ -85,7 +86,27 @@ void Model::mouseMoveEvent(QMouseEvent *event)
 
 void Model::populate_list()
 {
-    fin * f = new fin(p, event_id, this);
+    QDir program_dir("/usr/share/applications/");
+    QStringList programs = program_dir.entryList(QStringList() << "*.desktop",QDir::Files);
+    foreach (QString app, programs) {
+        QFile file(app);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            continue;
+        }
+        QMap<QString, QString> dict;
+        while (!file.atEnd()){
+            QStringList parse = QString(file.readLine()).split('=');
+            dict.insert(parse.first(), parse.last());
+        }
+        if (dict.contains("Terminal")){
+            if (dict.value("Terminal")=="false")
+            {
+                //TODO: finish implementing getting programs to run
+            }
+        }
+    }
+    fin * f = new fin(p, event_id, this, nullptr, nullptr);
     f->offset = 0;
     fin_stack.push(f);
     f->hide();

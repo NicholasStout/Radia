@@ -13,7 +13,7 @@ int fin::x = 0;
 int fin::y = 0;
 int fin::span = 30;
 
-fin::fin(QWidget *parent, int e_id, QObject * model) : QWidget(parent)
+fin::fin(QWidget *parent, int e_id, QObject * model, QString img, QString command) : QWidget(parent)
 {
     m = model;
     event_id = e_id;
@@ -23,7 +23,8 @@ fin::fin(QWidget *parent, int e_id, QObject * model) : QWidget(parent)
     bound = QRectF(x,y,res,res);
     bound2 = QRectF(((inner_res+x)*.25), ((inner_res+y)*.25),inner_res, inner_res);
     setGeometry(x,y, res, res);
-    image = QImage("/home/knil/Pictures/test.png");
+    image = QImage(img);
+    com = command;
 }
 
 void fin::paintEvent(QPaintEvent *)
@@ -40,8 +41,8 @@ void fin::paintEvent(QPaintEvent *)
     QRectF target = center_img(image);
     circle = QPainterPath();
     circle.arcTo(target, 0, 360);
-    //painter.setClipPath(circle);
-    //painter.drawImage(target, image, source);
+    painter.setClipPath(circle);
+    painter.drawImage(target, image, source);
     QString ang_string;
     ang_string.setNum(angle);
     painter.drawText(target, Qt::AlignCenter, ang_string);
@@ -78,19 +79,23 @@ void fin::mouseReleaseEvent(QMouseEvent *event)
 
 void fin::mouseMoveEvent(QMouseEvent *event)
 {
-//    if (grab)
-//    {
-//        //angle = calc_angle(event->pos());
-//        double delta = calc_angle(event->pos());
-//        angle+=round(delta-grab_angle);
-//        grab_angle=delta;
-//        angle = int(angle+360) % 360;
-//        QCoreApplication::postEvent(m, new QEvent(QEvent::Type(event_id)));
-//        this->repaint();
-//        //event->accept();
-//    } else {
+    if (grab)
+    {
+        //angle = calc_angle(event->pos());
+        double curr_angle = calc_angle(event->pos());
+        //printf("%d,%d,%f,%f ", event->x(), event->y(),delta,grab_angle);
+        int delta = round(curr_angle-grab_angle);
+        if (delta != 0) {
+            angle+=delta;
+            grab_angle=curr_angle;
+        }
+        angle = int(angle+360) % 360;
+        QCoreApplication::postEvent(m, new QEvent(QEvent::Type(event_id)));
+        this->repaint();
+        event->accept();
+    } else {
         event->ignore();
-//    }
+    }
 }
 
 void fin::make_path()
@@ -119,7 +124,7 @@ double fin::calc_angle(QPoint c)
 QRectF fin::center_img(QImage img)
 {
     //Sos the algo is this:
-    int r = int ((res+inner_res)/4); //Take the average of the RADII
+    int r = int ((res+inner_res)/4); //Take the average of the radii
     double rad = deg_to_rad(loc_angle+(span/2));
     int centeredx = ((res+x)/2)-(img.size().width()/2);
     int centeredy = ((res+y)/2)-(img.size().height()/2);

@@ -26,13 +26,14 @@ public:
     double ang_check;
     int event_id;
 
-    explicit fin(QWidget *parent = nullptr, int e_id = -1, QObject * model = nullptr);
+    explicit fin(QWidget *parent = nullptr, int e_id = -1, QObject * model = nullptr, QString img = nullptr,  QString command = nullptr);
     void paintEvent(QPaintEvent *);
     void setContainer(QRect box) {container = box;}
     QPainterPath center;
     QPainterPath circle;
     QImage image;
     QObject * m;
+    QString com;
 
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
@@ -43,6 +44,7 @@ public:
     double rad_to_deg(double theta);
     QSize sizeHint() const;
     QRectF center_img(QImage img);
+    double get_loc_angle(){return loc_angle;}
     ~fin();
 
 signals:
