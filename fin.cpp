@@ -13,7 +13,7 @@ int fin::x = 0;
 int fin::y = 0;
 int fin::span = 30;
 
-fin::fin(QWidget *parent, int e_id, QObject * model, QString img, QString command) : QWidget(parent)
+fin::fin(QWidget *parent, int e_id, QObject * model, QImage* img, QString command) : QWidget(parent)
 {
     m = model;
     event_id = e_id;
@@ -23,7 +23,12 @@ fin::fin(QWidget *parent, int e_id, QObject * model, QString img, QString comman
     bound = QRectF(x,y,res,res);
     bound2 = QRectF(((inner_res+x)*.25), ((inner_res+y)*.25),inner_res, inner_res);
     setGeometry(x,y, res, res);
-    image = QImage(img);
+    if (img && !img->isNull()) {
+        image = *img;
+    }
+    else {
+        image = QImage("/home/knil/Pictures/test.jpg");
+    }
     com = command;
 }
 
@@ -37,7 +42,11 @@ void fin::paintEvent(QPaintEvent *)
     painter.setBrush(c);
     painter.drawPath(center);
     QRectF source(0.0, 0.0, 64, 64);
-    image = image.scaled(64,64);
+    try {
+        image = image.scaled(64,64);
+    } catch (QException e) {
+        std::cout << com.toStdString();
+    }
     QRectF target = center_img(image);
     circle = QPainterPath();
     circle.arcTo(target, 0, 360);

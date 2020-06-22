@@ -25,6 +25,7 @@ Radia::Radia(QWidget *parent) :
     }
 
     l = new Radia_Layout;
+    //parent->setLayout(l);
     m = new Model(l, this);
 
     QSize *size = new QSize(h, w);

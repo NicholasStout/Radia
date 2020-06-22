@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QtWidgets>
 #include <QEvent>
+#include <QtSvg/QSvgRenderer>
 #include "fin.h"
 #include "radia_layout.h"
 
@@ -28,6 +29,7 @@ private:
     void populate_list();
     bool event(QEvent * e);
     void mouseMoveEvent(QMouseEvent *event);
+    QImage * find_icon(QString s);
 };
 
 #endif // MODEL_H
