@@ -13,10 +13,39 @@ Model::Model(Radia_Layout * l, QWidget * parent) : QObject(nullptr)
 {
     layout = l;
     p = parent;
-    event_id = QEvent::registerEventType();
     populate_list();
     angle = &visible.front()->angle;
+    grab_angle = &visible.front()->grab_angle;
+    res = &visible.front()->res;
     prev_angle = int(*angle);
+}
+
+void Model::set_angle(QPoint p) {
+    double curr_angle = calc_angle(p, *res);
+    double delta = curr_angle-*grab_angle;
+    printf("%d,%d ", p.x(), p.y());
+    if (delta != 0) {
+        *angle+=delta;
+        *grab_angle=curr_angle;
+    }
+    if (*angle > 360 || *angle < 0) {
+        *angle = int(*angle+360) % 360;
+    }
+
+    if (int(visible.last()->loc_angle)%360 >= 180)
+    {
+        if (!fout_stack.isEmpty())
+        {
+            move_left();
+        } else {
+            visible.last()->angle = 179.95 - visible.last()->offset;
+        }
+    } else if ((int(visible.first()->loc_angle) % 360) < 340 &&(int(visible.first()->loc_angle) % 360) > 180)
+    {
+        printf("pass right\n");
+        move_right();
+        //prev_angle = int(*angle);
+    }
 }
 
 void Model::move_left()
@@ -40,52 +69,47 @@ void Model::move_right()
     if (!fin_stack.isEmpty())
     {
         printf("Move right\n");
-        fin * hold = visible.takeFirst();
-        visible.first()->setParent(p);
-        visible.first()->show();
-        layout->removeWidget(hold);
-        hold->hide();
-        fout_stack.push(hold);
-        hold = fin_stack.pop();
-        hold->setParent(visible.back());
-        hold->show();
-        hold->offset = visible.back()->offset+layout->angle;
-        visible.append(hold);
-        layout->addWidget(hold);
-    }
-}
-bool Model::event(QEvent * e)
-{
-    if (int(e->type()) == event_id)
-    {
-        //printf("%d, ", int(visible.first()->loc_angle) % 360);
-        if (int(visible.last()->loc_angle)%360 > 180)
-        {
-            if (!fout_stack.isEmpty())
-            {
-                move_left();
-            } else {
-                visible.last()->angle = 180 - visible.last()->offset;
-            }
-            printf("pass\n");
-            //prev_angle = int(*angle);
-        } else if ((int(visible.first()->loc_angle) % 360) == 340)
-        {
-            printf("pass right\n");
-            move_right();
-            //prev_angle = int(*angle);
+        fin * hold = visible.takeFirst(); // take the fin we wish to remove and hold it
+        if (hold->grab) {
+            visible.first()->grab = 1;
         }
-        return true;
+        visible.first()->setParent(p); // set the next fin to be the child of the layout
+        visible.first()->show(); //show it or they will all go away
+        layout->removeWidget(hold); //remove the held fin
+        hold->hide(); // hide it
+        fout_stack.push(hold); // save it for later
+        hold = fin_stack.pop(); //pop one off of the stack for the other end
+        hold->setParent(visible.back()); // set it's paraent to be the last fin
+        hold->show(); // show it
+        hold->offset = visible.back()->offset+layout->angle; //set its angle
+        visible.append(hold); // add it to the list of visible fins
+        layout->addWidget(hold); //add it to the layout
     }
-    e->ignore();
-    return false;
 }
-
-void Model::mouseMoveEvent(QMouseEvent *event)
-{
-    printf("Oh yeah, it's all coming together\n");
-    event->ignore();
-}
+//bool Model::event(QEvent * e)
+//{
+//    if (int(e->type()) == event_id)
+//    {
+//        //printf("%d, ", int(visible.first()->loc_angle) % 360);
+//        if (int(visible.last()->loc_angle)%360 >= 180)
+//        {
+//            if (!fout_stack.isEmpty())
+//            {
+//                move_left();
+//            } else {
+//                visible.last()->angle = 180 - visible.last()->offset;
+//            }
+//        } else if ((int(visible.first()->loc_angle) % 360) == 340)
+//        {
+//            printf("pass right\n");
+//            move_right();
+//            //prev_angle = int(*angle);
+//        }
+//        return true;
+//    }
+//    e->ignore();
+//    return false;
+//}
 
 void Model::populate_list()
 {
@@ -104,6 +128,11 @@ void Model::populate_list()
         while (!file.atEnd()){
             QStringList parse = QString(file.readLine()).trimmed().split('=');
             dict.insert(parse.first(), parse.last());
+        }
+        if (dict.contains("NoDisplay")) {
+            if (dict.value("NoDisplay") == "true") {
+                continue;
+            }
         }
         if (dict.contains("Terminal")){
             if (dict.value("Terminal")=="false")
@@ -153,6 +182,19 @@ QImage* Model::find_icon(QString s) {
         return new QImage(img);
     }
     return new QImage("/home/knil/Pictures/test.png");
+}
+
+double Model::calc_angle(QPoint c, int res)
+{
+    int resolution = res;
+    double x = c.x()-(resolution/2);
+    double ang = rad_to_deg(atan(((c.y()*-1)+(resolution/2))/x)); //Mmmm Pi
+    if (c.x() < resolution/2) {
+        ang+=180;
+    } else if (c.y() >= (resolution/2.0)) {
+        ang+=360;
+    }
+    return ang;
 }
 
 Model::~Model(){}

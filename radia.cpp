@@ -23,9 +23,8 @@ Radia::Radia(QWidget *parent) :
         h+=screen.height();
         w+=screen.width();
     }
-
+    //setMouseTracking(true);
     l = new Radia_Layout;
-    //parent->setLayout(l);
     m = new Model(l, this);
 
     QSize *size = new QSize(h, w);
@@ -40,8 +39,9 @@ Radia::Radia(QWidget *parent) :
 
 void Radia::mouseMoveEvent(QMouseEvent *event)
 {
-    printf("Oh yeah, it's all coming together\n");
-    event->ignore();
+    event->accept();
+    m->set_angle(event->pos());
+    this->repaint();
 }
 
 void Radia::paintEvent(QPaintEvent *)

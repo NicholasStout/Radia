@@ -13,6 +13,7 @@ public:
     static int res;
     static int x;
     static int y;
+    static double grab_angle;
 
     int offset;
     double loc_angle;
@@ -21,7 +22,6 @@ public:
     QRectF bound2;
     QRect container;
     int grab;
-    double grab_angle;
     bool off;
     double ang_check;
     int event_id;
@@ -36,12 +36,9 @@ public:
     QString com;
 
     void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
+    //void mouseReleaseEvent(QMouseEvent *event);
     void make_path();
-    void mouseMoveEvent(QMouseEvent *event);
-    double calc_angle(QPoint c);
-    double deg_to_rad(double theta);
-    double rad_to_deg(double theta);
+    //void mouseMoveEvent(QMouseEvent *event);
     QSize sizeHint() const;
     QRectF center_img(QImage img);
     double get_loc_angle(){return loc_angle;}

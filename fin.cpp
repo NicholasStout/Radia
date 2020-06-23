@@ -2,12 +2,14 @@
 #include <iostream>
 #include <cmath>
 #include <string>
+#include <model.h>
 
 /*
  * This class is to be the radial widget that encircles the center widget. When this widget is clicked, the program it is representing launches.
  * */
 
 double fin::angle = 5;
+double fin::grab_angle = 0;
 int fin::res = 500;
 int fin::x = 0;
 int fin::y = 0;
@@ -67,7 +69,7 @@ void fin::mousePressEvent(QMouseEvent *event)
         if (center.contains(p))
         {
             grab = 1;
-            grab_angle = calc_angle(event->pos());
+            grab_angle = Model::calc_angle(event->pos(), res);
             event->accept();
         }
         else
@@ -77,35 +79,40 @@ void fin::mousePressEvent(QMouseEvent *event)
     }
 }
 
-void fin::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton)
-    {
-        grab = 0;
-        event->ignore();
-    }
-}
+//void fin::mouseReleaseEvent(QMouseEvent *event)
+//{
+//    if (event->button() == Qt::LeftButton)
+//    {
+//        grab = 0;
+//        event->ignore();
+//    }
+//}
 
-void fin::mouseMoveEvent(QMouseEvent *event)
-{
-    if (grab)
-    {
-        //angle = calc_angle(event->pos());
-        double curr_angle = calc_angle(event->pos());
-        //printf("%d,%d,%f,%f ", event->x(), event->y(),delta,grab_angle);
-        int delta = round(curr_angle-grab_angle);
-        if (delta != 0) {
-            angle+=delta;
-            grab_angle=curr_angle;
-        }
-        angle = int(angle+360) % 360;
-        QCoreApplication::postEvent(m, new QEvent(QEvent::Type(event_id)));
-        this->repaint();
-        event->accept();
-    } else {
-        event->ignore();
-    }
-}
+//void fin::mouseMoveEvent(QMouseEvent *event)
+//{
+//    //if (grab)
+//    //{
+//        //angle = calc_angle(event->pos());
+////    if (!grab) {
+////        event->ignore();
+////    } else {
+//        event->accept();
+//        double curr_angle = calc_angle(event->pos());
+//        double delta = curr_angle-grab_angle;
+//        printf("%f", grab_angle);
+//        if (delta != 0) {
+//            angle+=delta;
+//            grab_angle=curr_angle;
+//        }
+//        if (angle > 360 || angle < 0) {
+//            angle = int(angle+360) % 360;
+//        }
+//        QCoreApplication::postEvent(m, new QEvent(QEvent::Type(event_id)));
+//        this->repaint();
+//    //} else {
+//    //    event->ignore();
+////    }
+//}
 
 void fin::make_path()
 {
@@ -118,23 +125,11 @@ void fin::make_path()
     center.setFillRule(Qt::WindingFill);
 }
 
-double fin::calc_angle(QPoint c)
-{
-    double x = c.x()-(res/2);
-    double ang = rad_to_deg(atan(((c.y()*-1)+(res/2))/x)); //Mmmm Pi
-    if (c.x() < res/2) {
-        ang+=180;
-    } else if (c.y() >= (res/2.0)) {
-        ang+=360;
-    }
-    return ang;
-}
-
 QRectF fin::center_img(QImage img)
 {
     //Sos the algo is this:
     int r = int ((res+inner_res)/4); //Take the average of the radii
-    double rad = deg_to_rad(loc_angle+(span/2));
+    double rad = Model::deg_to_rad(loc_angle+(span/2));
     int centeredx = ((res+x)/2)-(img.size().width()/2);
     int centeredy = ((res+y)/2)-(img.size().height()/2);
     int i_x = int (r*cos(-rad)+centeredx); //move from radial to cartesian and adjust for placement
@@ -146,16 +141,6 @@ QRectF fin::center_img(QImage img)
 QSize fin::sizeHint() const
 {
     return QSize(1920, 1080);
-}
-
-double fin::deg_to_rad(double theta)
-{
-    return theta*(3.14159/180);
-}
-
-double fin::rad_to_deg(double theta)
-{
-    return theta*(180/3.14159);
 }
 
 fin::~fin(){

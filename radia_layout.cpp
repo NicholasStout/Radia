@@ -49,7 +49,6 @@ int Radia_Layout::count() const
 
 bool Radia_Layout::can_add_fin()
 {
-    printf("%d\n", list.size());
     return (list.size() < (180/angle));
 }
 
