@@ -9,7 +9,7 @@
  * This encompassing class serves as the View and Controller of the MVC design pattern. The model is called inside of it.
 */
 Radia::Radia(QWidget *parent) :
-    QMainWindow(parent)
+    QWidget(parent)
 {
     setAttribute(Qt::WA_TranslucentBackground, true);
     setWindowFlags(Qt::FramelessWindowHint);
@@ -23,8 +23,9 @@ Radia::Radia(QWidget *parent) :
         h+=screen.height();
         w+=screen.width();
     }
-    //setMouseTracking(true);
-    l = new Radia_Layout;
+    setMouseTracking(true);
+    l = new Radia_Layout(this);
+    //setLayout(l);
     m = new Model(l, this);
 
     QSize *size = new QSize(h, w);
@@ -40,6 +41,7 @@ Radia::Radia(QWidget *parent) :
 void Radia::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
+    printf("%d,%d\n", event->pos().x(), event->y());
     m->set_angle(event->pos());
     this->repaint();
 }

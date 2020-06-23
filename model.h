@@ -11,6 +11,7 @@
 class Model : public QObject
 {
 public:
+    int grab;
 
     explicit Model(Radia_Layout * l, QWidget * parent);
     void set_angle(QPoint p);

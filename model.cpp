@@ -2,6 +2,7 @@
 #include <string>
 #include <stdlib.h>
 #include <iostream>
+#include <fin.h>
 
 
 /*
@@ -18,12 +19,15 @@ Model::Model(Radia_Layout * l, QWidget * parent) : QObject(nullptr)
     grab_angle = &visible.front()->grab_angle;
     res = &visible.front()->res;
     prev_angle = int(*angle);
+    grab = 0;
 }
 
+
 void Model::set_angle(QPoint p) {
+    if (grab) {
     double curr_angle = calc_angle(p, *res);
     double delta = curr_angle-*grab_angle;
-    printf("%d,%d ", p.x(), p.y());
+    //printf("%d,%d ", p.x(), p.y());
     if (delta != 0) {
         *angle+=delta;
         *grab_angle=curr_angle;
@@ -42,9 +46,13 @@ void Model::set_angle(QPoint p) {
         }
     } else if ((int(visible.first()->loc_angle) % 360) < 340 &&(int(visible.first()->loc_angle) % 360) > 180)
     {
-        printf("pass right\n");
-        move_right();
-        //prev_angle = int(*angle);
+        if (!fin_stack.isEmpty())
+        {
+            move_right();
+        } else {
+            visible.first()->angle = 340;
+        }
+    }
     }
 }
 
@@ -56,7 +64,7 @@ void Model::move_left()
     hold->hide();
     fin_stack.push(hold);
     hold = fout_stack.pop();
-    hold->offset = visible.first()->offset-layout->angle;
+    //hold->offset = visible.first()->offset-layout->angle;
     visible.front()->setParent(hold);
     hold->setParent(p);
     hold->show();
@@ -66,50 +74,23 @@ void Model::move_left()
 }
 void Model::move_right()
 {
-    if (!fin_stack.isEmpty())
-    {
-        printf("Move right\n");
-        fin * hold = visible.takeFirst(); // take the fin we wish to remove and hold it
-        if (hold->grab) {
-            visible.first()->grab = 1;
-        }
-        visible.first()->setParent(p); // set the next fin to be the child of the layout
-        visible.first()->show(); //show it or they will all go away
-        layout->removeWidget(hold); //remove the held fin
-        hold->hide(); // hide it
-        fout_stack.push(hold); // save it for later
-        hold = fin_stack.pop(); //pop one off of the stack for the other end
-        hold->setParent(visible.back()); // set it's paraent to be the last fin
-        hold->show(); // show it
-        hold->offset = visible.back()->offset+layout->angle; //set its angle
-        visible.append(hold); // add it to the list of visible fins
-        layout->addWidget(hold); //add it to the layout
+    printf("Move right\n");
+    fin * hold = visible.takeFirst(); // take the fin we wish to remove and hold it
+    if (hold->grab) {
+        visible.first()->grab = 1;
     }
+    visible.first()->setParent(p); // set the next fin to be the child of the MainWindow
+    visible.first()->show(); //show it or they will all go away
+    layout->removeWidget(hold); //remove the held fin
+    hold->hide(); // hide it
+    fout_stack.push(hold); // save it for later
+    hold = fin_stack.pop(); //pop one off of the stack for the other end
+    //hold->setParent(visible.back()); // set it's paraent to be the last fin
+    hold->show(); // show it
+    //hold->offset = visible.back()->offset+layout->angle; //set its angle
+    visible.append(hold); // add it to the list of visible fins
+    layout->addWidget(hold); //add it to the layout
 }
-//bool Model::event(QEvent * e)
-//{
-//    if (int(e->type()) == event_id)
-//    {
-//        //printf("%d, ", int(visible.first()->loc_angle) % 360);
-//        if (int(visible.last()->loc_angle)%360 >= 180)
-//        {
-//            if (!fout_stack.isEmpty())
-//            {
-//                move_left();
-//            } else {
-//                visible.last()->angle = 180 - visible.last()->offset;
-//            }
-//        } else if ((int(visible.first()->loc_angle) % 360) == 340)
-//        {
-//            printf("pass right\n");
-//            move_right();
-//            //prev_angle = int(*angle);
-//        }
-//        return true;
-//    }
-//    e->ignore();
-//    return false;
-//}
 
 void Model::populate_list()
 {
@@ -146,7 +127,7 @@ void Model::populate_list()
                     img = new QImage(ico);
                 }
                 fin * f = new fin(head, event_id, this, img, dict.value("Exec"));
-                f->offset = layout->angle*i;
+                f->offset = layout->angle*i % 360;
                 fin_stack.prepend(f);
                 f->hide();
                 head = f;
@@ -154,7 +135,6 @@ void Model::populate_list()
             }
         }
     }
-    printf("%d", layout->can_add_fin());
     while (layout->can_add_fin())
     {
         visible.append(fin_stack.pop());

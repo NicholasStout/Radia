@@ -32,7 +32,7 @@ public:
     QPainterPath center;
     QPainterPath circle;
     QImage image;
-    QObject * m;
+    QObject* m;
     QString com;
 
     void mousePressEvent(QMouseEvent *event);

@@ -12,9 +12,10 @@ public:
     int angle;
     int count_w;
 
-    Radia_Layout();
+    Radia_Layout(QWidget* parent);
     void addItem(QLayoutItem *item);
     void addWidget(QWidget *w);
+    void removeWidget(QWidget *w);
     void setGeometry(const QRect &r);
     QSize sizeHint() const;
     QLayoutItem * itemAt(int index) const;

@@ -5,8 +5,8 @@
  *  in order to lay the widgets on top of one another. This is necessary as they much be the same size and in the same position to draw and rotate correctly.
  * */
 
-Radia_Layout::Radia_Layout() :
-    QLayout(nullptr)
+Radia_Layout::Radia_Layout(QWidget* parent) :
+    QLayout(parent)
 {
     angle = 35;
     count_w = 0;
@@ -22,6 +22,17 @@ void Radia_Layout::addWidget(QWidget *w)
     fin* f =(fin*) w;
     f->show();
     addItem(new QWidgetItem(w));
+}
+
+void Radia_Layout::removeWidget(QWidget *w)
+{
+    fin* f =(fin*) w;
+    f->hide();
+    for (QLayoutItem * i : list) {
+        if (i->widget() == f) {
+            list.removeOne(i);
+        }
+    }
 }
 
 void Radia_Layout::setGeometry(const QRect &r)

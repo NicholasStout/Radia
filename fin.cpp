@@ -4,6 +4,7 @@
 #include <string>
 #include <model.h>
 
+
 /*
  * This class is to be the radial widget that encircles the center widget. When this widget is clicked, the program it is representing launches.
  * */
@@ -17,6 +18,7 @@ int fin::span = 30;
 
 fin::fin(QWidget *parent, int e_id, QObject * model, QImage* img, QString command) : QWidget(parent)
 {
+    setMouseTracking(true);
     m = model;
     event_id = e_id;
     grab = 0;
@@ -55,7 +57,7 @@ void fin::paintEvent(QPaintEvent *)
     painter.setClipPath(circle);
     painter.drawImage(target, image, source);
     QString ang_string;
-    ang_string.setNum(angle);
+    ang_string.setNum(loc_angle);
     painter.drawText(target, Qt::AlignCenter, ang_string);
     painter.end();
 }
@@ -68,7 +70,8 @@ void fin::mousePressEvent(QMouseEvent *event)
         QPointF p(event->pos().x(), event->pos().y());
         if (center.contains(p))
         {
-            grab = 1;
+            Model * mod = (Model*)m;
+            mod->grab = 1;
             grab_angle = Model::calc_angle(event->pos(), res);
             event->accept();
         }
@@ -76,6 +79,10 @@ void fin::mousePressEvent(QMouseEvent *event)
         {
             event->ignore();
         }
+    }
+    else
+    {
+        event->ignore();
     }
 }
 

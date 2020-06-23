@@ -8,7 +8,7 @@ namespace Ui {
 class Radia;
 }
 
-class Radia : public QMainWindow
+class Radia : public QWidget
 {
     Q_OBJECT
 
