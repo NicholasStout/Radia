@@ -18,13 +18,12 @@ Model::Model(Radia_Layout * l, QWidget * parent) : QObject(nullptr)
     angle = &visible.front()->angle;
     grab_angle = &visible.front()->grab_angle;
     res = &visible.front()->res;
-    prev_angle = int(*angle);
+    click_angle = 0;
     grab = 0;
 }
 
 
 void Model::set_angle(QPoint p) {
-    if (grab) {
     double curr_angle = calc_angle(p, *res);
     double delta = curr_angle-*grab_angle;
     //printf("%d,%d ", p.x(), p.y());
@@ -52,7 +51,6 @@ void Model::set_angle(QPoint p) {
         } else {
             visible.first()->angle = 340;
         }
-    }
     }
 }
 
@@ -90,6 +88,7 @@ void Model::move_right()
     //hold->offset = visible.back()->offset+layout->angle; //set its angle
     visible.append(hold); // add it to the list of visible fins
     layout->addWidget(hold); //add it to the layout
+    hold->grabMouse();
 }
 
 void Model::populate_list()
@@ -126,7 +125,8 @@ void Model::populate_list()
                 } else {
                     img = new QImage(ico);
                 }
-                fin * f = new fin(head, event_id, this, img, dict.value("Exec"));
+                fin * f = new fin(head, this, img, dict.value("Exec"));
+                QObject::connect(f, &fin::start, this, &Model::start_program);
                 f->offset = layout->angle*i % 360;
                 fin_stack.prepend(f);
                 f->hide();
@@ -175,6 +175,16 @@ double Model::calc_angle(QPoint c, int res)
         ang+=360;
     }
     return ang;
+}
+
+void Model::start_program(QString s) {
+    QProcess *process = new QProcess(p);
+    QStringList lst = s.split(' ');
+    QString prog = lst.takeFirst();
+    qDebug() << "launching " << s;
+    int result = process->startDetached(prog, lst);
+    qDebug() << "result: " << result;
+    QApplication::quit();
 }
 
 Model::~Model(){}

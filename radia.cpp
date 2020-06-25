@@ -4,6 +4,7 @@
 #include "fin.h"
 #include "radia_layout.h"
 #include <QtWidgets>
+#include <iostream>
 
 /*
  * This encompassing class serves as the View and Controller of the MVC design pattern. The model is called inside of it.
@@ -23,16 +24,16 @@ Radia::Radia(QWidget *parent) :
         h+=screen.height();
         w+=screen.width();
     }
-    setMouseTracking(true);
+    //setMouseTracking(true);
     l = new Radia_Layout(this);
     //setLayout(l);
     m = new Model(l, this);
 
-    QSize *size = new QSize(h, w);
+    QSize *size = new QSize(500, 500);
 
     //Get demensions for the launcher
 
-    QRect *start = new QRect(QPoint(0,0), *size);
+    QRect *start = new QRect(QCursor::pos(), *size);
     setGeometry(*start);
     setFixedHeight(h);
     setFixedWidth(w);
@@ -41,9 +42,15 @@ Radia::Radia(QWidget *parent) :
 void Radia::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
-    printf("%d,%d\n", event->pos().x(), event->y());
+    //printf("%d,%d\n", event->pos().x(), event->y());
     m->set_angle(event->pos());
     this->repaint();
+}
+
+bool Radia::eventFilter(QObject *object, QEvent *event)
+{
+    //qDebug() << event->type();
+    return false;
 }
 
 void Radia::paintEvent(QPaintEvent *)
@@ -64,6 +71,23 @@ void Radia::mousePressEvent(QMouseEvent *event)
     QApplication::quit();
 }
 
+void Radia::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        printf("Mouse release: %d,%d\n", event->x(), event->y());
+        event->ignore();
+    }
+}
+
+void Radia::changeEvent(QEvent * event)
+{
+    if (event->type() == QEvent::ActivationChange) {
+        if (!this->isActiveWindow()) {
+            QApplication::quit();
+        }
+    }
+}
 
 Radia::~Radia()
 {

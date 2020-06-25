@@ -26,7 +26,7 @@ public:
     double ang_check;
     int event_id;
 
-    explicit fin(QWidget *parent = nullptr, int e_id = -1, QObject * model = nullptr, QImage* img = nullptr,  QString command = nullptr);
+    explicit fin(QWidget *parent = nullptr, QObject * model = nullptr, QImage* img = nullptr,  QString command = nullptr);
     void paintEvent(QPaintEvent *);
     void setContainer(QRect box) {container = box;}
     QPainterPath center;
@@ -36,15 +36,16 @@ public:
     QString com;
 
     void mousePressEvent(QMouseEvent *event);
-    //void mouseReleaseEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
     void make_path();
-    //void mouseMoveEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
     QSize sizeHint() const;
     QRectF center_img(QImage img);
     double get_loc_angle(){return loc_angle;}
     ~fin();
 
 signals:
+    void start(QString s);
 
 public slots:
 };

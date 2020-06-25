@@ -8,5 +8,6 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     Radia *w = new Radia;
     w->show();
+    a.installEventFilter(w);
     return a.exec();
 }

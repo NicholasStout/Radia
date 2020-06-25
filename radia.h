@@ -24,6 +24,9 @@ public:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent * event);
     void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void changeEvent(QEvent *) override;
+    bool eventFilter(QObject *object, QEvent *event) override;
     ~Radia();
 
 private:

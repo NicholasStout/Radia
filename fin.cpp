@@ -16,11 +16,10 @@ int fin::x = 0;
 int fin::y = 0;
 int fin::span = 30;
 
-fin::fin(QWidget *parent, int e_id, QObject * model, QImage* img, QString command) : QWidget(parent)
+fin::fin(QWidget *parent, QObject * model, QImage* img, QString command) : QWidget(parent)
 {
-    setMouseTracking(true);
+    //setMouseTracking(true);
     m = model;
-    event_id = e_id;
     grab = 0;
     off = false;
     inner_res = res/1.5;
@@ -70,6 +69,7 @@ void fin::mousePressEvent(QMouseEvent *event)
         QPointF p(event->pos().x(), event->pos().y());
         if (center.contains(p))
         {
+            std::cout << "Mouse grabbed by "+ com.toStdString()+'\n';
             Model * mod = (Model*)m;
             mod->grab = 1;
             grab_angle = Model::calc_angle(event->pos(), res);
@@ -86,40 +86,27 @@ void fin::mousePressEvent(QMouseEvent *event)
     }
 }
 
-//void fin::mouseReleaseEvent(QMouseEvent *event)
-//{
-//    if (event->button() == Qt::LeftButton)
-//    {
-//        grab = 0;
-//        event->ignore();
-//    }
-//}
+void fin::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        if (Model::calc_angle(event->pos(), res) == grab_angle && center.contains(event->pos()))
+        {
+                emit start(com);
+                event->accept();
+        } else {
+            event->ignore();
+        }
+    } else {
+        event->ignore();
+    }
+}
 
-//void fin::mouseMoveEvent(QMouseEvent *event)
-//{
-//    //if (grab)
-//    //{
-//        //angle = calc_angle(event->pos());
-////    if (!grab) {
-////        event->ignore();
-////    } else {
-//        event->accept();
-//        double curr_angle = calc_angle(event->pos());
-//        double delta = curr_angle-grab_angle;
-//        printf("%f", grab_angle);
-//        if (delta != 0) {
-//            angle+=delta;
-//            grab_angle=curr_angle;
-//        }
-//        if (angle > 360 || angle < 0) {
-//            angle = int(angle+360) % 360;
-//        }
-//        QCoreApplication::postEvent(m, new QEvent(QEvent::Type(event_id)));
-//        this->repaint();
-//    //} else {
-//    //    event->ignore();
-////    }
-//}
+void fin::mouseMoveEvent(QMouseEvent *event)
+{
+    //printf("fin mouse move: %d,%d\n", event->x(),event->y());
+    event->ignore();
+}
 
 void fin::make_path()
 {

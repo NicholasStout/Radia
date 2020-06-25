@@ -31,10 +31,9 @@ private:
     QStack<fin *> fout_stack;
     QList<fin *> visible;
     Radia_Layout * layout;
-    int event_id;
     double * angle;
     double * grab_angle;
-    int prev_angle;
+    int click_angle;
     int * res;
     QWidget * p;
 
@@ -44,6 +43,9 @@ private:
     //bool event(QEvent * e);
     void mouseMoveEvent(QMouseEvent *event);
     QImage * find_icon(QString s);
+
+public slots:
+    void start_program(QString s);
 };
 
 #endif // MODEL_H
