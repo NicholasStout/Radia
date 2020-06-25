@@ -33,10 +33,11 @@ Radia::Radia(QWidget *parent) :
 
     //Get demensions for the launcher
 
-    QRect *start = new QRect(QCursor::pos(), *size);
+    QRect *start = new QRect(QPoint(QCursor::pos().rx()-250,QCursor::pos().ry()-250), *size);
+    printf("%d", QCursor::pos().rx());
     setGeometry(*start);
-    setFixedHeight(h);
-    setFixedWidth(w);
+    setFixedHeight(500);
+    setFixedWidth(500);
 }
 
 void Radia::mouseMoveEvent(QMouseEvent *event)
@@ -53,17 +54,17 @@ bool Radia::eventFilter(QObject *object, QEvent *event)
     return false;
 }
 
-void Radia::paintEvent(QPaintEvent *)
-{
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
-    QColor c(127, 0, 127);
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(c);
-    QPainterPath center;
-    painter.drawPath(center);
-    painter.end();
-}
+//void Radia::paintEvent(QPaintEvent *)
+//{
+//    QPainter painter(this);
+//    painter.setRenderHint(QPainter::Antialiasing);
+//    QColor c(127, 0, 127);
+//    painter.setPen(Qt::NoPen);
+//    painter.setBrush(c);
+//    QPainterPath center;
+//    painter.drawPath(center);
+//    painter.end();
+//}
 
 void Radia::mousePressEvent(QMouseEvent *event)
 {
@@ -84,7 +85,8 @@ void Radia::changeEvent(QEvent * event)
 {
     if (event->type() == QEvent::ActivationChange) {
         if (!this->isActiveWindow()) {
-            QApplication::quit();
+            //QApplication::quit();
+            2+2;
         }
     }
 }

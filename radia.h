@@ -21,7 +21,7 @@ public:
 
     explicit Radia(QWidget *parent = nullptr);
     void begin_state(std::string * img, std::string * name);
-    void paintEvent(QPaintEvent *);
+    //void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent * event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);

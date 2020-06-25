@@ -107,7 +107,9 @@ void Model::populate_list()
         QMap<QString, QString> dict;
         while (!file.atEnd()){
             QStringList parse = QString(file.readLine()).trimmed().split('=');
-            dict.insert(parse.first(), parse.last());
+            if (!dict.contains(parse.first())) {
+                dict.insert(parse.first(), parse.last());
+            }
         }
         if (dict.contains("NoDisplay")) {
             if (dict.value("NoDisplay") == "true") {
@@ -135,7 +137,7 @@ void Model::populate_list()
             }
         }
     }
-    while (layout->can_add_fin())
+    while (layout->can_add_fin() && !fin_stack.isEmpty())
     {
         visible.append(fin_stack.pop());
         layout->addWidget(visible.last());

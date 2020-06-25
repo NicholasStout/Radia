@@ -57,7 +57,7 @@ void fin::paintEvent(QPaintEvent *)
     painter.drawImage(target, image, source);
     QString ang_string;
     ang_string.setNum(loc_angle);
-    painter.drawText(target, Qt::AlignCenter, ang_string);
+    //painter.drawText(target, Qt::AlignCenter, ang_string);
     painter.end();
 }
 

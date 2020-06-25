@@ -17,6 +17,7 @@ public:
     void addWidget(QWidget *w);
     void removeWidget(QWidget *w);
     void setGeometry(const QRect &r);
+    void setGeometry(const QRect &r, int &ang);
     QSize sizeHint() const;
     QLayoutItem * itemAt(int index) const;
     QLayoutItem * takeAt(int index);

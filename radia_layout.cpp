@@ -43,7 +43,26 @@ void Radia_Layout::setGeometry(const QRect &r)
         fin *f = (fin *)(*itr)->widget();
         f->x = r.x();
         f->y = r.y();
-        f->span = angle;
+        f->span = angle-5;
+
+        for (; itr != list.end(); itr++) {
+            f = (fin *)(*itr)->widget();
+            f->setGeometry(r);
+        }
+    }
+    //TODO: add a way to change angle
+}
+
+void Radia_Layout::setGeometry(const QRect &r, int &ang)
+{
+    if (r.width() == r.height())
+    {
+        QList<QLayoutItem *>::iterator itr = list.begin();
+        fin *f = (fin *)(*itr)->widget();
+        f->x = r.x();
+        f->y = r.y();
+        angle = ang;
+        f->span = angle-5;
 
         for (; itr != list.end(); itr++) {
             f = (fin *)(*itr)->widget();
