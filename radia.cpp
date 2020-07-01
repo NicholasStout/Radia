@@ -85,8 +85,7 @@ void Radia::changeEvent(QEvent * event)
 {
     if (event->type() == QEvent::ActivationChange) {
         if (!this->isActiveWindow()) {
-            //QApplication::quit();
-            2+2;
+            QApplication::quit();
         }
     }
 }
