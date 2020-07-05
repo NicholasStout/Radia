@@ -30,7 +30,7 @@ fin::fin(QWidget *parent, QObject * model, QImage* img, QString command) : QWidg
         image = *img;
     }
     else {
-        image = QImage("/home/knil/Pictures/test.jpg");
+        image = QImage("nothin");
     }
     com = command;
 }

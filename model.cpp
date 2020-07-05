@@ -163,7 +163,7 @@ QImage* Model::find_icon(QString s) {
 
         return new QImage(img);
     }
-    return new QImage("/home/knil/Pictures/test.png");
+    return new QImage("nothin");
 }
 
 double Model::calc_angle(QPoint c, int res)
