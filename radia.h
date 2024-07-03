@@ -1,7 +1,9 @@
 #ifndef RADIA_H
 #define RADIA_H
-#include "model.h"
+//#include "model.h"
 #include "fin.h"
+#include "radia_layout.h"
+#include "dial_layout.h"
 #include <QMainWindow>
 
 namespace Ui {
@@ -15,9 +17,9 @@ class Radia : public QWidget
 public:
     QRect container;
     QPainter * painter;
-    fin f;
+    Fin f;
     Radia_Layout *l;
-    Model * m;
+    //Model * m;
 
     explicit Radia(QWidget *parent = nullptr);
     void begin_state(std::string * img, std::string * name);

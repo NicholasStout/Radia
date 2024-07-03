@@ -8,6 +8,8 @@
 /*
  * This is a model under the MVC design pattern, as well as acting as a factory for the fin Objects, which are their own controllers.
  * This objects creats fins based on what programs they are to run, as well as adding and hiding objects as they are needed.
+ *
+ * This will be removed in the future, replaced with *_dial_layout
  */
 
 Model::Model(Radia_Layout * l, QWidget * parent) : QObject(nullptr)
@@ -57,7 +59,7 @@ void Model::set_angle(QPoint p) {
 void Model::move_left()
 {
     printf("Move left\n");
-    fin * hold = visible.takeLast();
+    Fin * hold = visible.takeLast();
     layout->removeWidget(hold);
     hold->hide();
     fin_stack.push(hold);
@@ -73,7 +75,7 @@ void Model::move_left()
 void Model::move_right()
 {
     printf("Move right\n");
-    fin * hold = visible.takeFirst(); // take the fin we wish to remove and hold it
+    Fin * hold = visible.takeFirst(); // take the fin we wish to remove and hold it
     if (hold->grab) {
         visible.first()->grab = 1;
     }
@@ -127,8 +129,8 @@ void Model::populate_list()
                 } else {
                     img = new QImage(ico);
                 }
-                fin * f = new fin(head, this, img, dict.value("Exec"));
-                QObject::connect(f, &fin::start, this, &Model::start_program);
+                Fin * f = new Fin(head, this, img, dict.value("Exec"));
+                QObject::connect(f, &Fin::start, this, &Model::start_program);
                 f->offset = layout->angle*i % 360;
                 fin_stack.prepend(f);
                 f->hide();

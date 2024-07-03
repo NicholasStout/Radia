@@ -4,7 +4,8 @@
 #include <QLayout>
 #include <QWidget>
 #include <QList>
-#include "fin.h"
+//#include "fin.h"
+#include "dial_layout.h"
 
 class Radia_Layout : public QLayout
 {
@@ -23,9 +24,15 @@ public:
     QLayoutItem * takeAt(int index);
     int count() const;
     bool can_add_fin();
+    void addLayout(QLayout l);
+    void setUpperDial(Dial_Layout* d);
+    void setLowerDial(Dial_Layout* d);
+//    void addCenterLayout(Center_Layout* c);
 
 private:
     QList<QLayoutItem*> list;
+    Dial_Layout* upper;
+    Dial_Layout* lower;
 };
 
 #endif // RADIA_LAYOUT_H

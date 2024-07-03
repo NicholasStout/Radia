@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QtWidgets>
 
-class fin : public QWidget
+class Fin : public QWidget
 {
     Q_OBJECT
 public:
@@ -26,7 +26,7 @@ public:
     double ang_check;
     int event_id;
 
-    explicit fin(QWidget *parent = nullptr, QObject * model = nullptr, QImage* img = nullptr,  QString command = nullptr);
+    explicit Fin(QWidget *parent = nullptr, QObject * model = nullptr, QImage* img = nullptr,  QString command = nullptr);
     void paintEvent(QPaintEvent *);
     void setContainer(QRect box) {container = box;}
     QPainterPath center;
@@ -42,12 +42,37 @@ public:
     QSize sizeHint() const;
     QRectF center_img(QImage img);
     double get_loc_angle(){return loc_angle;}
-    ~fin();
+    ~Fin();
 
 signals:
     void start(QString s);
 
 public slots:
 };
+
+
+static float degToRad(double theta)
+    {
+        return theta*(3.14159/180);
+    }
+
+static float radToDeg(double theta)
+    {
+        return theta*(180/3.14159);
+    }
+
+static float calcAngle(QPoint c, int res)
+    {
+        double x = c.x()-(res/2);
+        double ang = radToDeg(atan(((c.y()*-1)+(res/2))/x)); //Mmmm Pi
+        if (c.x() < res/2) {
+            ang+=180;
+        } else if (c.y() >= (res/2.0)) {
+            ang+=360;
+        }
+        return ang;
+    }
+
+
 
 #endif // FIN_H

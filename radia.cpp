@@ -27,8 +27,8 @@ Radia::Radia(QWidget *parent) :
     //setMouseTracking(true);
     l = new Radia_Layout(this);
     //setLayout(l);
-    m = new Model(l, this);
-
+    Dial_Layout * upper = new Dial_Layout();
+    l->setUpperDial(upper);
     QSize *size = new QSize(500, 500);
 
     //Get demensions for the launcher

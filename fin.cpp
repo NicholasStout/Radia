@@ -2,24 +2,26 @@
 #include <iostream>
 #include <cmath>
 #include <string>
-#include <model.h>
+//#include <model.h>
+#include "dial_layout.h"
+
 
 
 /*
  * This class is to be the radial widget that encircles the center widget. When this widget is clicked, the program it is representing launches.
  * */
 
-double fin::angle = 5;
-double fin::grab_angle = 0;
-int fin::res = 500;
-int fin::x = 0;
-int fin::y = 0;
-int fin::span = 30;
+double Fin::angle = 5;
+double Fin::grab_angle = 0;
+int Fin::res = 500;
+int Fin::x = 0;
+int Fin::y = 0;
+int Fin::span = 30;
 
-fin::fin(QWidget *parent, QObject * model, QImage* img, QString command) : QWidget(parent)
+Fin::Fin(QWidget *parent, QObject* dial, QImage* img, QString command) : QWidget(parent)
 {
     //setMouseTracking(true);
-    m = model;
+    m = dial;
     grab = 0;
     off = false;
     inner_res = res/1.5;
@@ -35,7 +37,7 @@ fin::fin(QWidget *parent, QObject * model, QImage* img, QString command) : QWidg
     com = command;
 }
 
-void fin::paintEvent(QPaintEvent *)
+void Fin::paintEvent(QPaintEvent *)
 {
     make_path();
     QPainter painter(this);
@@ -61,7 +63,7 @@ void fin::paintEvent(QPaintEvent *)
     painter.end();
 }
 
-void fin::mousePressEvent(QMouseEvent *event)
+void Fin::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
@@ -70,9 +72,9 @@ void fin::mousePressEvent(QMouseEvent *event)
         if (center.contains(p))
         {
             std::cout << "Mouse grabbed by "+ com.toStdString()+'\n';
-            Model * mod = (Model*)m;
-            mod->grab = 1;
-            grab_angle = Model::calc_angle(event->pos(), res);
+            //Model * mod = (Model*)m;
+            //mod->grab = 1;
+            grab_angle = calcAngle(event->pos(), res);
             event->accept();
         }
         else
@@ -86,11 +88,11 @@ void fin::mousePressEvent(QMouseEvent *event)
     }
 }
 
-void fin::mouseReleaseEvent(QMouseEvent *event)
+void Fin::mouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
-        if (Model::calc_angle(event->pos(), res) == grab_angle && center.contains(event->pos()))
+        if (calcAngle(event->pos(), res) == grab_angle && center.contains(event->pos()))
         {
                 emit start(com);
                 event->accept();
@@ -102,13 +104,13 @@ void fin::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-void fin::mouseMoveEvent(QMouseEvent *event)
+void Fin::mouseMoveEvent(QMouseEvent *event)
 {
     //printf("fin mouse move: %d,%d\n", event->x(),event->y());
     event->ignore();
 }
 
-void fin::make_path()
+void Fin::make_path()
 {
     loc_angle =angle+offset;
     center = QPainterPath();
@@ -119,11 +121,11 @@ void fin::make_path()
     center.setFillRule(Qt::WindingFill);
 }
 
-QRectF fin::center_img(QImage img)
+QRectF Fin::center_img(QImage img)
 {
     //Sos the algo is this:
     int r = int ((res+inner_res)/4); //Take the average of the radii
-    double rad = Model::deg_to_rad(loc_angle+(span/2));
+    double rad = degToRad(loc_angle+(span/2));
     int centeredx = ((res+x)/2)-(img.size().width()/2);
     int centeredy = ((res+y)/2)-(img.size().height()/2);
     int i_x = int (r*cos(-rad)+centeredx); //move from radial to cartesian and adjust for placement
@@ -132,11 +134,11 @@ QRectF fin::center_img(QImage img)
     return ret;
 }
 
-QSize fin::sizeHint() const
+QSize Fin::sizeHint() const
 {
     return QSize(1920, 1080);
 }
 
-fin::~fin(){
+Fin::~Fin(){
     center.~QPainterPath();
 }

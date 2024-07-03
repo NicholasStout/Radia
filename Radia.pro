@@ -26,6 +26,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    dial_layout.cpp \
         main.cpp \
         radia.cpp \
     model.cpp \
@@ -34,6 +35,7 @@ SOURCES += \
     fin.cpp
 
 HEADERS += \
+    dial_layout.h \
         radia.h \
     model.h \
     controller.h \

@@ -27,9 +27,9 @@ public:
     }
     ~Model();
 private:
-    QStack<fin *> fin_stack;
-    QStack<fin *> fout_stack;
-    QList<fin *> visible;
+    QStack<Fin *> fin_stack;
+    QStack<Fin *> fout_stack;
+    QList<Fin *> visible;
     Radia_Layout * layout;
     double * angle;
     double * grab_angle;
