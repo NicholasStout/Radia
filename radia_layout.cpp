@@ -16,43 +16,22 @@ Radia_Layout::Radia_Layout(QWidget* parent) :
     upper = nullptr;
     lower = nullptr;
 }
-// void Radia_Layout::addItem(QLayoutItem *item)
-// {
-//     item->widget()->show();
-//     list.append(item);
-// }
 
-// void Radia_Layout::addWidget(QWidget *w)
-// {
-//     fin* f =(fin*) w;
-//     f->show();
-//     addItem(new QWidgetItem(w));
-// }
+void Radia_Layout::addItem(QLayoutItem *item)
+{
 
-// void Radia_Layout::removeWidget(QWidget *w)
-// {
-//     Fin* f =(Fin*) w;
-//     f->hide();
-//     for (QLayoutItem * i : list) {
-//         if (i->widget() == f) {
-//             list.removeOne(i);
-//         }
-//     }
-// }
+}
 
 void Radia_Layout::setGeometry(const QRect &r)
 {
     if (r.width() == r.height())
     {
-        QList<QLayoutItem *>::iterator itr = list.begin();
-        Fin *f = (Fin *)(*itr)->widget();
-        f->x = r.x();
-        f->y = r.y();
-        f->span = angle-5;
-
-        for (; itr != list.end(); itr++) {
-            f = (Fin *)(*itr)->widget();
-            f->setGeometry(r);
+        geom = &r;
+        if (upper != nullptr){
+            upper->setGeometry(r);
+        }
+        if (lower != nullptr){
+            lower->setGeometry(r);
         }
     }
     //TODO: add a way to change angle
@@ -60,21 +39,7 @@ void Radia_Layout::setGeometry(const QRect &r)
 
 void Radia_Layout::setGeometry(const QRect &r, int &ang)
 {
-    if (r.width() == r.height())
-    {
-        QList<QLayoutItem *>::iterator itr = list.begin();
-        Fin *f = (Fin *)(*itr)->widget();
-        f->x = r.x();
-        f->y = r.y();
-        angle = ang;
-        f->span = angle-5;
-
-        for (; itr != list.end(); itr++) {
-            f = (Fin *)(*itr)->widget();
-            f->setGeometry(r);
-
-        }
-    }
+    setGeometry(r);
     //TODO: add a way to change angle
 }
 
@@ -112,9 +77,7 @@ void Radia_Layout::setUpperDial(Dial_Layout* l)
         delete upper;
     }
     upper = l;
-    QSize size = sizeHint();
-    l->setGeometry(QRect(size.height(), size.length()));
+    l->setGeometry(*geom);
 }
-
 
 

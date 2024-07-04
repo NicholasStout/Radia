@@ -3,7 +3,7 @@
 #include <cmath>
 #include <string>
 //#include <model.h>
-#include "dial_layout.h"
+//#include "dial_layout.h"
 
 
 
@@ -18,10 +18,10 @@ int Fin::x = 0;
 int Fin::y = 0;
 int Fin::span = 30;
 
-Fin::Fin(QWidget *parent, QObject* dial, QImage* img, QString command) : QWidget(parent)
+Fin::Fin(QWidget *parent, QObject* model, QImage* img, QString command) : QWidget(parent)
 {
     //setMouseTracking(true);
-    m = dial;
+    m = model;
     grab = 0;
     off = false;
     inner_res = res/1.5;

@@ -3,6 +3,7 @@
 
 #include <QLayout>
 #include <QWidget>
+#include <QtWidgets>
 #include <QList>
 #include <QEvent>
 #include <QtSvg/QSvgRenderer>
@@ -10,6 +11,7 @@
 
 class Dial_Layout : public QLayout
 {
+//    Q_OBJECT
 public:
     float angle;
     int grab;
@@ -31,6 +33,9 @@ public:
     static float calcAngle(QPoint c, int res);
 
 
+
+public slots:
+    void startProgram(QString s);
 private:
     QList<QLayoutItem *> list;
     QWidget* p;
@@ -43,7 +48,7 @@ private:
 
     void moveLeft();
     void moveRight();
-    void populateList();
+    void populateList(QWidget* parent);
     //bool event(QEvent * e);
     void mouseMoveEvent(QMouseEvent *event);
     QImage * findIcon(QString s);

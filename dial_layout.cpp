@@ -1,4 +1,5 @@
 #include "dial_layout.h"
+//#include <QObject>
 
 /* Sublayout to handle the dials on the top and bottom of the UI
  */
@@ -6,7 +7,8 @@
 Dial_Layout::Dial_Layout(QWidget* parent) :
     QLayout(parent)
 {
-    angle = 0;
+    angle = 35;
+    populateList(parent);
 }
 void Dial_Layout::addItem(QLayoutItem *item)
 {
@@ -31,14 +33,11 @@ void Dial_Layout::setGeometry(const QRect &r)
     if (r.width() == r.height())
     {
         QList<QLayoutItem *>::iterator itr = list.begin();
-        Fin *f = (Fin *)(*itr)->widget();
-        f->x = r.x();
-        f->y = r.y();
-        f->span = angle-5;
-
+        Fin *f;
         for (; itr != list.end(); itr++) {
             f = (Fin *)(*itr)->widget();
             f->setGeometry(r);
+            f->span = angle-5;
         }
     }
 }
@@ -138,7 +137,7 @@ void Dial_Layout::moveLeft()
 
 void Dial_Layout::moveRight()
 {
-    printf("Move right\n");
+    printf("Move right\nthis");
     Fin * hold = visible.takeFirst(); // take the fin we wish to remove and hold it
     if (hold->grab) {
         visible.first()->grab = 1;
@@ -156,14 +155,16 @@ void Dial_Layout::moveRight()
     addFin(hold); //add it to the layout
     hold->grabMouse();
 }
-
-void Dial_Layout::populateList()
+/*
+ * This is to populate the list of installed programs to make fins for. This will be moved to a new class eventually.
+ */
+void Dial_Layout::populateList(QWidget* parent)
 {
     QString base_uri = "/usr/share/applications/";
     QDir program_dir(base_uri);
     QStringList programs = program_dir.entryList(QStringList() << "*.desktop",QDir::Files);
     int i = 0;
-    QWidget * head = p;
+    QWidget * head = parent;
     foreach (QString app, programs) {
         QFile file(base_uri+app);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -194,7 +195,7 @@ void Dial_Layout::populateList()
                     img = new QImage(ico);
                 }
                 Fin * f = new Fin(head, this, img, dict.value("Exec"));
-                QObject::connect(f, &Fin::start, this, &Model::start_program);
+                QObject::connect(f, &Fin::start, this, &Dial_Layout::startProgram);
                 f->offset = int(angle*i) % 360;
                 fin_stack.prepend(f);
                 f->hide();
@@ -233,6 +234,25 @@ QImage *Dial_Layout::findIcon(QString s)
     }
     return new QImage("nothin");
 }
+
+void Dial_Layout::mouseMoveEvent(QMouseEvent *event)
+{
+    event->accept();
+    printf("%d,%d\n", event->pos().x(), event->y());
+    setAngle(event->pos());
+    p->update();
+}
+
+void Dial_Layout::startProgram(QString s) {
+    QProcess *process = new QProcess(p);
+    QStringList lst = s.split(' ');
+    QString prog = lst.takeFirst();
+    qDebug() << "launching " << s;
+    int result = process->startDetached(prog, lst);
+    qDebug() << "result: " << result;
+    QApplication::quit();
+}
+
 
 
 

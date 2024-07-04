@@ -9,11 +9,14 @@
 
 class Radia_Layout : public QLayout
 {
+    Q_OBJECT
+
 public:
     int angle;
     int count_w;
+    const QRect* geom;
 
-    Radia_Layout(QWidget* parent);
+    explicit Radia_Layout(QWidget* parent);
     void addItem(QLayoutItem *item);
     void addWidget(QWidget *w);
     void removeWidget(QWidget *w);
@@ -27,7 +30,8 @@ public:
     void addLayout(QLayout l);
     void setUpperDial(Dial_Layout* d);
     void setLowerDial(Dial_Layout* d);
-//    void addCenterLayout(Center_Layout* c);
+//  void addCenterLayout(Center_Layout* c);
+//    virtual ~Radia_Layout() = default;
 
 private:
     QList<QLayoutItem*> list;

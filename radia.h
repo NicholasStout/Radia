@@ -3,8 +3,11 @@
 //#include "model.h"
 #include "fin.h"
 #include "radia_layout.h"
-#include "dial_layout.h"
 #include <QMainWindow>
+#include "fin.h"
+#include <QtWidgets>
+
+
 
 namespace Ui {
 class Radia;
@@ -30,7 +33,6 @@ public:
     void changeEvent(QEvent *) override;
     bool eventFilter(QObject *object, QEvent *event) override;
     ~Radia();
-
 private:
     Ui::Radia *ui;
 };

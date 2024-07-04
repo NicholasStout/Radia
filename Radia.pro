@@ -30,7 +30,6 @@ SOURCES += \
         main.cpp \
         radia.cpp \
     model.cpp \
-    controller.cpp \
     radia_layout.cpp \
     fin.cpp
 
@@ -38,8 +37,6 @@ HEADERS += \
     dial_layout.h \
         radia.h \
     model.h \
-    controller.h \
-    search.h \
     radia_layout.h \
     fin.h
 

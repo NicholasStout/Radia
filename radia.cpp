@@ -1,13 +1,7 @@
 #include "radia.h"
-#include "model.h"
-#include "search.h"
-#include "fin.h"
-#include "radia_layout.h"
-#include <QtWidgets>
-#include <iostream>
 
 /*
- * This encompassing class serves as the View and Controller of the MVC design pattern. The model is called inside of it.
+ * This class sets up the layouts and handles overarching commands and events
 */
 Radia::Radia(QWidget *parent) :
     QWidget(parent)
@@ -27,8 +21,7 @@ Radia::Radia(QWidget *parent) :
     //setMouseTracking(true);
     l = new Radia_Layout(this);
     //setLayout(l);
-    Dial_Layout * upper = new Dial_Layout();
-    l->setUpperDial(upper);
+    Dial_Layout * upper = new Dial_Layout(this);
     QSize *size = new QSize(500, 500);
 
     //Get demensions for the launcher
@@ -38,14 +31,16 @@ Radia::Radia(QWidget *parent) :
     setGeometry(*start);
     setFixedHeight(500);
     setFixedWidth(500);
+    l->setGeometry(*start);
+    l->setUpperDial(upper);
 }
 
 void Radia::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
-    //printf("%d,%d\n", event->pos().x(), event->y());
-    m->set_angle(event->pos());
-    this->repaint();
+    printf("%d,%d\n", event->pos().x(), event->y());
+    //set_angle(event->pos());
+    repaint();
 }
 
 bool Radia::eventFilter(QObject *object, QEvent *event)
@@ -89,6 +84,7 @@ void Radia::changeEvent(QEvent * event)
         }
     }
 }
+
 
 Radia::~Radia()
 {
