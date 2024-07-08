@@ -27,6 +27,7 @@ CONFIG += c++11
 
 SOURCES += \
     dial_layout.cpp \
+    input_handler.cpp \
         main.cpp \
         radia.cpp \
     model.cpp \
@@ -35,6 +36,7 @@ SOURCES += \
 
 HEADERS += \
     dial_layout.h \
+    input_handler.h \
         radia.h \
     model.h \
     radia_layout.h \

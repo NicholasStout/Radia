@@ -14,7 +14,7 @@ class Dial_Layout : public QLayout
 //    Q_OBJECT
 public:
     float angle;
-    int grab;
+    bool grab;
 
 
     Dial_Layout(QWidget* parent = nullptr);
@@ -32,10 +32,10 @@ public:
     void setAngle(QPoint p);
     static float calcAngle(QPoint c, int res);
 
-
-
 public slots:
-    void startProgram(QString s);
+    void setGrab(bool msg);
+    void slide(QEvent * e);
+
 private:
     QList<QLayoutItem *> list;
     QWidget* p;
@@ -50,8 +50,9 @@ private:
     void moveRight();
     void populateList(QWidget* parent);
     //bool event(QEvent * e);
-    void mouseMoveEvent(QMouseEvent *event);
+    //void mouseMoveEvent(QMouseEvent *event);
     QImage * findIcon(QString s);
+    //bool eventFilter(QObject *object, QEvent *event);
 };
 
 #endif // DIAL_LAYOUT_H

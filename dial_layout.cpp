@@ -39,7 +39,7 @@ void Dial_Layout::setGeometry(const QRect &r)
             f->setGeometry(r);
             f->span = angle-5;
         }
-    }
+    }upper->
 }
 void Dial_Layout::setGeometry(const QRect &r, float ang)
 {
@@ -118,6 +118,21 @@ float Dial_Layout::calcAngle(QPoint c, int res)
     return ang;
 }
 
+void Dial_Layout::setGrab(bool msg)
+{
+    grab = msg;
+}
+
+void Dial_Layout::slide(QEvent *e)
+{
+
+    QMouseEvent *event = (QMouseEvent*) e;
+    event->accept();
+    printf("%d,%d\n", event->pos().x(), event->y());
+    upper->setAngle(event->pos());
+    repaint();
+}
+
 void Dial_Layout::moveLeft()
 {
     printf("Move left\n");
@@ -138,23 +153,24 @@ void Dial_Layout::moveLeft()
 void Dial_Layout::moveRight()
 {
     printf("Move right\nthis");
-    Fin * hold = visible.takeFirst(); // take the fin we wish to remove and hold it
+    Fin * hold = visible.takeFirst();         // take the fin we wish to remove and hold it
     if (hold->grab) {
         visible.first()->grab = 1;
     }
-    visible.first()->setParent(p); // set the next fin to be the child of the MainWindow
-    visible.first()->show(); //show it or they will all go away
-    removeFin(hold); //remove the held fin
-    hold->hide(); // hide it
-    fout_stack.push(hold); // save it for later
-    hold = fin_stack.pop(); //pop one off of the stack for the other end
-    //hold->setParent(visible.back()); // set it's paraent to be the last fin
-    hold->show(); // show it
+    visible.first()->setParent(p);          // set the next fin to be the child of the MainWindow
+    visible.first()->show();                //show it or they will all go away
+    removeFin(hold);                         //remove the held fin
+    hold->hide();                           // hide it
+    fout_stack.push(hold);                  // save it for later
+    hold = fin_stack.pop();                //pop one off of the stack for the other en
+    //hold->setParent(visible.back());     // set it's paraent to be the last fin
+    hold->show();                          // show it
     //hold->offset = visible.back()->offset+layout->angle; //set its angle
-    visible.append(hold); // add it to the list of visible fins
-    addFin(hold); //add it to the layout
+    visible.append(hold);                  // add it to the list of visible fins
+    addFin(hold);                          //add it to the layout
     hold->grabMouse();
 }
+
 /*
  * This is to populate the list of installed programs to make fins for. This will be moved to a new class eventually.
  */
@@ -195,7 +211,8 @@ void Dial_Layout::populateList(QWidget* parent)
                     img = new QImage(ico);
                 }
                 Fin * f = new Fin(head, this, img, dict.value("Exec"));
-                QObject::connect(f, &Fin::start, this, &Dial_Layout::startProgram);
+                QObject::connect(f, &Fin::setGrab, this, &Dial_Layout::setGrab);
+                QObject::connect(f, &Fin::mouseMoved, this, &Dial_Layout::slide);
                 f->offset = int(angle*i) % 360;
                 fin_stack.prepend(f);
                 f->hide();
@@ -235,23 +252,6 @@ QImage *Dial_Layout::findIcon(QString s)
     return new QImage("nothin");
 }
 
-void Dial_Layout::mouseMoveEvent(QMouseEvent *event)
-{
-    event->accept();
-    printf("%d,%d\n", event->pos().x(), event->y());
-    setAngle(event->pos());
-    p->update();
-}
-
-void Dial_Layout::startProgram(QString s) {
-    QProcess *process = new QProcess(p);
-    QStringList lst = s.split(' ');
-    QString prog = lst.takeFirst();
-    qDebug() << "launching " << s;
-    int result = process->startDetached(prog, lst);
-    qDebug() << "result: " << result;
-    QApplication::quit();
-}
 
 
 

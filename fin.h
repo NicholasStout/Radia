@@ -45,9 +45,12 @@ public:
     ~Fin();
 
 signals:
-    void start(QString s);
+    void setGrab(bool g);
+    void mouseMoved(QEvent* e);
 
 public slots:
+private:
+    void startProgram();
 };
 
 

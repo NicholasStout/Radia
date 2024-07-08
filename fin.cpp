@@ -72,8 +72,7 @@ void Fin::mousePressEvent(QMouseEvent *event)
         if (center.contains(p))
         {
             std::cout << "Mouse grabbed by "+ com.toStdString()+'\n';
-            //Model * mod = (Model*)m;
-            //mod->grab = 1;
+            emit setGrab(true);
             grab_angle = calcAngle(event->pos(), res);
             event->accept();
         }
@@ -94,7 +93,7 @@ void Fin::mouseReleaseEvent(QMouseEvent *event)
     {
         if (calcAngle(event->pos(), res) == grab_angle && center.contains(event->pos()))
         {
-                emit start(com);
+                startProgram();
                 event->accept();
         } else {
             event->ignore();
@@ -132,6 +131,16 @@ QRectF Fin::center_img(QImage img)
     int i_y = int (r*sin(-rad)+centeredy); //also ajust for finding the upper left corner
     QRectF ret(i_x,i_y,img.size().width(),img.size().height());
     return ret;
+}
+
+void Fin::startProgram() {
+    QProcess *process = new QProcess();
+    QStringList lst = com.split(' ');
+    QString prog = lst.takeFirst();
+    qDebug() << "launching " << com;
+    int result = process->startDetached(prog, lst);
+    qDebug() << "result: " << result;
+    QApplication::quit();
 }
 
 QSize Fin::sizeHint() const

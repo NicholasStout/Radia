@@ -21,7 +21,7 @@ Radia::Radia(QWidget *parent) :
     //setMouseTracking(true);
     l = new Radia_Layout(this);
     //setLayout(l);
-    Dial_Layout * upper = new Dial_Layout(this);
+    upper = new Dial_Layout();
     QSize *size = new QSize(500, 500);
 
     //Get demensions for the launcher
@@ -39,7 +39,7 @@ void Radia::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
     printf("%d,%d\n", event->pos().x(), event->y());
-    //set_angle(event->pos());
+    upper->setAngle(event->pos());
     repaint();
 }
 

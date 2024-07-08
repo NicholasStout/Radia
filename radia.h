@@ -22,6 +22,7 @@ public:
     QPainter * painter;
     Fin f;
     Radia_Layout *l;
+    Dial_Layout *upper;
     //Model * m;
 
     explicit Radia(QWidget *parent = nullptr);
