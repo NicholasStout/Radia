@@ -1,7 +1,6 @@
 #include "fin.h"
 #include <iostream>
 #include <cmath>
-#include <string>
 //#include <model.h>
 //#include "dial_layout.h"
 
@@ -18,10 +17,10 @@ int Fin::x = 0;
 int Fin::y = 0;
 int Fin::span = 30;
 
-Fin::Fin(QWidget *parent, QObject* model, QImage* img, QString command) : QWidget(parent)
+Fin::Fin(QWidget *parent, QIcon* img, QString command) : QWidget(parent)
 {
     //setMouseTracking(true);
-    m = model;
+    //m = model;
     grab = 0;
     off = false;
     inner_res = res/1.5;
@@ -32,7 +31,8 @@ Fin::Fin(QWidget *parent, QObject* model, QImage* img, QString command) : QWidge
         image = *img;
     }
     else {
-        image = QImage("nothin");
+        //image = QImage("nothin");
+        image = QIcon();
     }
     com = command;
 }
@@ -47,20 +47,59 @@ void Fin::paintEvent(QPaintEvent *)
     painter.setBrush(c);
     painter.drawPath(center);
     QRectF source(0.0, 0.0, 64, 64);
-    try {
-        image = image.scaled(64,64);
-    } catch (QException e) {
-        std::cout << com.toStdString();
-    }
     QRectF target = center_img(image);
     circle = QPainterPath();
     circle.arcTo(target, 0, 360);
     painter.setClipPath(circle);
-    painter.drawImage(target, image, source);
+    image.paint(&painter, target.toRect());
     QString ang_string;
     ang_string.setNum(loc_angle);
     //painter.drawText(target, Qt::AlignCenter, ang_string);
     painter.end();
+}
+
+void Fin::make_path()
+{
+    loc_angle =angle+offset;
+    center = QPainterPath();
+    center.arcMoveTo(bound, loc_angle);
+    center.arcTo(bound, loc_angle, span);
+    center.arcTo(bound2, (span+loc_angle), -span);
+    center.closeSubpath();
+    center.setFillRule(Qt::WindingFill);
+}
+
+QRectF Fin::center_img(QIcon img)
+{
+    //Sos the algo is this:
+    QSize size = img.actualSize(QSize(64,64));
+    int r = int ((res+inner_res)/4); //Take the average of the radii
+    double rad = degToRad(loc_angle+(span/2));
+    int centeredx = ((res+x)/2)-(size.width()/2);
+    int centeredy = ((res+y)/2)-(size.height()/2);
+    int i_x = int (r*cos(-rad)+centeredx); //move from radial to cartesian and adjust for placement
+    int i_y = int (r*sin(-rad)+centeredy); //also ajust for finding the upper left corner
+    QRectF ret(i_x,i_y,size.width(),size.height());
+    return ret;
+}
+
+void Fin::startProgram() {
+    QProcess *process = new QProcess();
+    QStringList lst = com.split(' ');
+    QString prog = lst.takeFirst();
+    qDebug() << "launching " << com;
+    int result = process->startDetached(prog, lst);
+    qDebug() << "result: " << result;
+    QApplication::quit();
+}
+
+QSize Fin::sizeHint() const
+{
+    return QSize(1920, 1080);
+}
+
+Fin::~Fin(){
+    center.~QPainterPath();
 }
 
 void Fin::mousePressEvent(QMouseEvent *event)
@@ -105,49 +144,13 @@ void Fin::mouseReleaseEvent(QMouseEvent *event)
 
 void Fin::mouseMoveEvent(QMouseEvent *event)
 {
-    //printf("fin mouse move: %d,%d\n", event->x(),event->y());
-    event->ignore();
+    emit mouseMoved(event);
+    event->accept();
 }
 
-void Fin::make_path()
+void Fin::showUp()
 {
-    loc_angle =angle+offset;
-    center = QPainterPath();
-    center.arcMoveTo(bound, loc_angle);
-    center.arcTo(bound, loc_angle, span);
-    center.arcTo(bound2, (span+loc_angle), -span);
-    center.closeSubpath();
-    center.setFillRule(Qt::WindingFill);
+    setVisible(true);
 }
 
-QRectF Fin::center_img(QImage img)
-{
-    //Sos the algo is this:
-    int r = int ((res+inner_res)/4); //Take the average of the radii
-    double rad = degToRad(loc_angle+(span/2));
-    int centeredx = ((res+x)/2)-(img.size().width()/2);
-    int centeredy = ((res+y)/2)-(img.size().height()/2);
-    int i_x = int (r*cos(-rad)+centeredx); //move from radial to cartesian and adjust for placement
-    int i_y = int (r*sin(-rad)+centeredy); //also ajust for finding the upper left corner
-    QRectF ret(i_x,i_y,img.size().width(),img.size().height());
-    return ret;
-}
 
-void Fin::startProgram() {
-    QProcess *process = new QProcess();
-    QStringList lst = com.split(' ');
-    QString prog = lst.takeFirst();
-    qDebug() << "launching " << com;
-    int result = process->startDetached(prog, lst);
-    qDebug() << "result: " << result;
-    QApplication::quit();
-}
-
-QSize Fin::sizeHint() const
-{
-    return QSize(1920, 1080);
-}
-
-Fin::~Fin(){
-    center.~QPainterPath();
-}

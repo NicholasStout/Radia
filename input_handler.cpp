@@ -1,23 +1,30 @@
-#include "input_handler.h"
+// #include "input_handler.h"
 
-KB_Input_Handler::KB_Input_Handler(QObject *parent) : QWidget(parent)
-{
+// #include <qevent.h>
 
-}
+// KB_Input_Handler::KB_Input_Handler(QObject *parent) : QObject(parent)
+// {
 
-void KB_Input_Handler::process(QEvent *e)
-{
+// }
 
-}
+// void KB_Input_Handler::process(QEvent *e)
+// {
 
-Mouse_Input_Handler::Mouse_Input_Handler(QObject *parent) : QWidget(parent)
-{
+// }
 
-}
+// Mouse_Input_Handler::Mouse_Input_Handler(QObject *parent) : QObject(parent)
+// {
 
-void Mouse_Input_Handler::process(QEvent *e)
-{
+// }
 
-}
+// void Mouse_Input_Handler::process(QEvent *e)
+// {
+//     QMouseEvent* event = dynamic_cast<QMouseEvent*>(e);
+//     if (event == NULL) {
+//         return;
+//     }
+
+
+// }
 
 

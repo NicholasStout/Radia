@@ -26,21 +26,26 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    dial.cpp \
     dial_layout.cpp \
+    filehandler.cpp \
     input_handler.cpp \
         main.cpp \
         radia.cpp \
     model.cpp \
-    radia_layout.cpp \
-    fin.cpp
+    fin.cpp \
+    radia_layout.cpp
 
 HEADERS += \
+    dial.h \
     dial_layout.h \
+    filehandler.h \
     input_handler.h \
+    ipopulator.h \
         radia.h \
     model.h \
-    radia_layout.h \
-    fin.h
+    fin.h \
+    radia_layout.h
 
 FORMS += \
         radia.ui

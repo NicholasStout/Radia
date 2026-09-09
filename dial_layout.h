@@ -18,40 +18,41 @@ public:
 
 
     Dial_Layout(QWidget* parent = nullptr);
-    void addItem(QLayoutItem *item);
+    void addItem(QLayoutItem *item) override;
     void addFin(Fin *f);
-    void removeFin(Fin *f);
-    void setGeometry(const QRect &r);
+    void removeFin(QString name);
+    void setGeometry(const QRect &r) override;
     void setGeometry(const QRect &r, float ang);
-    QSize sizeHint() const;
-    QLayoutItem * itemAt(int index) const;
-    QLayoutItem * takeAt(int index);
-    int count() const;
+    void setSpan(float start, float stop);
+    QSize sizeHint() const override;
+    QLayoutItem * itemAt(int index) const override;
+    QLayoutItem * takeAt(int index) override;
+    int count() const override;
     bool canAddFin();
+    //bool hasHeightForWidth();
+    //int heightForWidth();
     //Moving certain functions from model.h here
     void setAngle(QPoint p);
     static float calcAngle(QPoint c, int res);
+    void moveLeft();
+    void moveRight();
+    void loadVisible();
+    QList<QLayoutItem *> list;
+    QWidget* p;
 
 public slots:
     void setGrab(bool msg);
-    void slide(QEvent * e);
+    void slide(QMouseEvent* e);
 
 private:
-    QList<QLayoutItem *> list;
-    QWidget* p;
-    QStack<Fin *> fin_stack;
-    QStack<Fin *> fout_stack;
-    QList<Fin *> visible;
     float grab_angle;
     int click_angle;
     int res;
+    int left, right, num_visible;
+    float startAng, stopAng;
 
-    void moveLeft();
-    void moveRight();
-    void populateList(QWidget* parent);
     //bool event(QEvent * e);
     //void mouseMoveEvent(QMouseEvent *event);
-    QImage * findIcon(QString s);
     //bool eventFilter(QObject *object, QEvent *event);
 };
 

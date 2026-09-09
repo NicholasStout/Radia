@@ -10,7 +10,7 @@ Radia::Radia(QWidget *parent) :
     setWindowFlags(Qt::FramelessWindowHint);
     //set screen invisble and frameless
 
-    QRect off = QApplication::desktop()->screenGeometry(this);
+    //QRect off = QApplication::primaryScreen()->geometry();
     int h, w;
     h = w = 0;
     for (QScreen * s : QGuiApplication::screens()) {
@@ -19,19 +19,20 @@ Radia::Radia(QWidget *parent) :
         w+=screen.width();
     }
     //setMouseTracking(true);
-    l = new Radia_Layout(this);
+    l = new radia_layout(this);
     //setLayout(l);
-    upper = new Dial_Layout();
-    QSize *size = new QSize(500, 500);
+    QSize size = QSize(250, 500);
 
     //Get demensions for the launcher
 
-    QRect *start = new QRect(QPoint(QCursor::pos().rx()-250,QCursor::pos().ry()-250), *size);
+    QRect start = QRect(QPoint(QCursor::pos().rx()-250,QCursor::pos().ry()-250), size);
     printf("%d", QCursor::pos().rx());
-    setGeometry(*start);
+    setGeometry(start);
+    start.setHeight(250);
+    upper = new Dial(this, &start);
     setFixedHeight(500);
     setFixedWidth(500);
-    l->setGeometry(*start);
+    l->setGeometry(start);
     l->setUpperDial(upper);
 }
 
@@ -39,7 +40,7 @@ void Radia::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
     printf("%d,%d\n", event->pos().x(), event->y());
-    upper->setAngle(event->pos());
+    //upper->setAngle(event->pos());
     repaint();
 }
 
