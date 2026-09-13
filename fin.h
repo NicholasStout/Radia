@@ -27,7 +27,7 @@ public:
     int event_id;
 
     explicit Fin(QWidget *parent = nullptr, QIcon* img = nullptr,  QString command = nullptr);
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent *) override;
     void setContainer(QRect box) {container = box;}
     QPainterPath center;
     QPainterPath circle;
@@ -35,11 +35,13 @@ public:
     QObject* m;
     QString com;
 
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
+    bool handleEvent(QInputEvent *e);
+
+    bool mousePress(QMouseEvent *event);
+    bool mouseRelease(QMouseEvent *event);
     void make_path();
-    void mouseMoveEvent(QMouseEvent *event);
-    QSize sizeHint() const;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    QSize sizeHint() const override;
     QRectF center_img(QIcon img);
     double get_loc_angle(){return loc_angle;}
     ~Fin();

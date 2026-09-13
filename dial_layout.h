@@ -33,12 +33,13 @@ public:
     //int heightForWidth();
     //Moving certain functions from model.h here
     void setAngle(QPoint p);
-    static float calcAngle(QPoint c, int res);
+    //static float calcAngle(QPoint c, int res);
     void moveLeft();
     void moveRight();
     void loadVisible();
     QList<QLayoutItem *> list;
     QWidget* p;
+    bool handleEvent(QInputEvent *e);
 
 public slots:
     void setGrab(bool msg);

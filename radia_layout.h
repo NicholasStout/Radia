@@ -16,10 +16,12 @@ public:
     QSize sizeHint() const override;
     QLayoutItem * itemAt(int index) const override;
     QLayoutItem * takeAt(int index) override;
+    bool handleEvent(QInputEvent *e);
     void setUpperDial(Dial* d);
     void setLowerDial(Dial* d);
     int count() const override;
 
+    void passEvent(QEvent *event);
 private:
     QList<QLayoutItem *> itemList;
 

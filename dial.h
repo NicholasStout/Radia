@@ -15,12 +15,14 @@ public:
     explicit Dial(QWidget *parent = nullptr, QRect * size = nullptr);
 
     void setPopulator(IPopulator *newPopulator);
+    //void mouseMoveEvent(QMouseEvent *event) override;
 
+    bool handleEvent(QInputEvent *e);
 signals:
 
-public slots:
-    void setGrab(bool msg);
-    void slide(QMouseEvent* e);
+//public slots:
+//    void setGrab(bool msg);
+//    void slide(QMouseEvent* e);
 
 private:
     IPopulator *populator;

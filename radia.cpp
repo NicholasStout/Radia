@@ -6,8 +6,9 @@
 Radia::Radia(QWidget *parent) :
     QWidget(parent)
 {
-    setAttribute(Qt::WA_TranslucentBackground, true);
+    //setAttribute(Qt::WA_TranslucentBackground, true);
     setWindowFlags(Qt::FramelessWindowHint);
+
     //set screen invisble and frameless
 
     //QRect off = QApplication::primaryScreen()->geometry();
@@ -18,17 +19,17 @@ Radia::Radia(QWidget *parent) :
         h+=screen.height();
         w+=screen.width();
     }
-    //setMouseTracking(true);
+    setMouseTracking(false);
     l = new radia_layout(this);
     //setLayout(l);
-    QSize size = QSize(250, 500);
+    QSize size = QSize(500, 500);
 
     //Get demensions for the launcher
 
-    QRect start = QRect(QPoint(QCursor::pos().rx()-250,QCursor::pos().ry()-250), size);
+    QRect start = QRect(QPoint(QCursor::pos().rx()-500,QCursor::pos().ry()-500), size);
     printf("%d", QCursor::pos().rx());
     setGeometry(start);
-    start.setHeight(250);
+    start.setHeight(500);
     upper = new Dial(this, &start);
     setFixedHeight(500);
     setFixedWidth(500);
@@ -42,12 +43,6 @@ void Radia::mouseMoveEvent(QMouseEvent *event)
     printf("%d,%d\n", event->pos().x(), event->y());
     //upper->setAngle(event->pos());
     repaint();
-}
-
-bool Radia::eventFilter(QObject *object, QEvent *event)
-{
-    //qDebug() << event->type();
-    return false;
 }
 
 //void Radia::paintEvent(QPaintEvent *)
@@ -81,10 +76,23 @@ void Radia::changeEvent(QEvent * event)
 {
     if (event->type() == QEvent::ActivationChange) {
         if (!this->isActiveWindow()) {
+            //qDebug() << "This fuckin thing is firing";
             QApplication::quit();
         }
     }
 }
+
+bool Radia::eventFilter(QObject *object, QEvent *event)
+{
+    if (auto *e = dynamic_cast<QInputEvent *>(event))
+    {
+        qDebug() << event->type();
+        return l->handleEvent(e);
+    }
+    return false;
+}
+
+
 
 
 Radia::~Radia()

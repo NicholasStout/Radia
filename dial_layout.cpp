@@ -11,14 +11,12 @@ Dial_Layout::Dial_Layout(QWidget* parent) :
     angle = 25;
     startAng = 0;
     stopAng = 180;
+    setGeometry(parent->geometry());
     num_visible = (stopAng-startAng)/(angle+5);
 }
 void Dial_Layout::addItem(QLayoutItem* item)
 {
     list.append(item);
-     //Fin* fin = dynamic_cast<Fin *>(item);
-     //list.append(item);
-     //fin_stack.prepend(fin);
  }
 
 
@@ -26,8 +24,6 @@ void Dial_Layout::addItem(QLayoutItem* item)
 
 void Dial_Layout::addFin(Fin *f)
 {
-    //if(left-right<num_visible){left++;}
-    //f->show();
     addWidget(f);
 }
 
@@ -102,39 +98,44 @@ bool Dial_Layout::canAddFin()
 
 void Dial_Layout::setAngle(QPoint p)
 {
-    float curr_angle = calcAngle(p, res);
-    float delta = curr_angle-grab_angle;
-    //printf("%d,%d ", p.x(), p.y());
-    if (delta != 0) {
-        angle+=delta;
-        grab_angle=curr_angle;
-    }
-    if (angle > 360 || angle < 0) {
-        angle = int(angle+360) % 360;
-    }
-
     Fin * leftFin = qobject_cast<Fin *>(list[left]->widget());
     Fin * rightFin = qobject_cast<Fin *>(list[right]->widget());
-    if (int(rightFin->loc_angle)%360 >= 180)
+    float curr_angle = calcAngle(p, 500);
+    float delta = curr_angle-angle;
+    if (delta != 0) {
+        angle=curr_angle;
+        leftFin->angle+=delta;
+    }
+    // if (angle > 360 || angle < 0) {
+    //     angle = int(angle+360) % 360;
+    // }
+
+    // if (int(rightFin->loc_angle)%360 >= 180)
+    // {
+    //     if (right > 0)
+    //     {
+    //         moveLeft();
+    //     } else {
+    //         rightFin->angle = 179.95 - rightFin->offset;
+    //     }
+    // } else if ((int(leftFin->loc_angle) % 360) < 340 &&(int(leftFin->loc_angle) % 360) > 180)
+    // {
+    //     if (left < list.count())
+    //     {
+    //         moveRight();
+    //     } else {
+    //         leftFin->angle = 340;
+    //     }
+    // }
+
+    for (int i = right; i <= left; i++)
     {
-        if (right > 0)
-        {
-            moveLeft();
-        } else {
-            rightFin->angle = 179.95 - rightFin->offset;
-        }
-    } else if ((int(leftFin->loc_angle) % 360) < 340 &&(int(leftFin->loc_angle) % 360) > 180)
-    {
-        if (left < list.count())
-        {
-            moveRight();
-        } else {
-            leftFin->angle = 340;
-        }
+        Fin * f = static_cast<Fin *>(list[i]->widget());
+        f->update();
     }
 
 }
-
+/**
 float Dial_Layout::calcAngle(QPoint c, int res)
 {
     double x = c.x()-(res/2);
@@ -146,6 +147,7 @@ float Dial_Layout::calcAngle(QPoint c, int res)
     }
     return ang;
 }
+**/
 
 void Dial_Layout::setGrab(bool msg)
 {
@@ -236,6 +238,21 @@ void Dial_Layout::loadVisible()
             f = newf;
         }
     }
+}
+
+bool Dial_Layout::handleEvent(QInputEvent *e)
+{
+    bool ret = false;
+    for (int i = right; i <= left; i++)
+    {
+        //qDebug()<<i;
+        Fin * f = static_cast<Fin *>(list[i]->widget());
+        if(f->handleEvent(e))
+        {
+            ret = true;
+        }
+    }
+    return ret;
 }
 
 

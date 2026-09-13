@@ -4,33 +4,20 @@
 
 void Dial::setBoundaryAngles(float start, float stop)
 {
-    startAng = start;
-    stopAng = stop;
+    startAng = start; //TODO: Delete
+    stopAng = stop; //TODO: Delete
     l->setSpan(start, stop);
 }
 
 Dial::Dial(QWidget *parent, QRect *size)
     : QWidget{parent}
 {
-    //QWidget::setWindowOpacity(0);
     setGeometry(*size);
-    populator = new FileHandler();
+    populator = new FileHandler(); //This is leaking TODO: Move this to radia
     l = new Dial_Layout(this);
     l->setGeometry(*size);
     setLayout(l);
     createFins();
-    //l->loadVisible();
-    //show();
-}
-
-void Dial::setGrab(bool msg)
-{
-
-}
-
-void Dial::slide(QMouseEvent *e)
-{
-
 }
 
 void Dial::setPopulator(IPopulator *newPopulator)
@@ -38,36 +25,48 @@ void Dial::setPopulator(IPopulator *newPopulator)
     populator = newPopulator;
 }
 
+bool Dial::handleEvent(QInputEvent *e)
+{
+    bool ret = false;
+    if (l->handleEvent(e))
+    {
+        ret = true;
+        switch (e->type())
+        {
+        case QEvent::MouseButtonPress:
+            grab = true;
+            angle = calcAngle(static_cast<QMouseEvent *>(e)->pos(), geometry().x());
+            l->angle = angle;
+            //l->setAngle(static_cast<QMouseEvent *>(e)->pos());
+            break;
+        case QEvent::MouseButtonRelease:
+            grab = false;
+            break;
+        case QEvent::MouseMove:
+            if (grab)
+            {
+                angle = calcAngle(static_cast<QMouseEvent *>(e)->pos(), geometry().x());
+                l->setAngle(static_cast<QMouseEvent *>(e)->pos());
+            }
+        default:
+            return true;
+        }
+    }
+    return ret;
+}
+
 void Dial::createFins()
 {
-    //int i = 0;
     QWidget * head = this;
     QList<FinDetails> finList = populator->populateList();
     QListIterator<FinDetails> it(finList);
     while(it.hasNext()) {
         FinDetails deetz = it.next();
         Fin * f = new Fin(head, &deetz.ico, deetz.exec);
-        QObject::connect(f, &Fin::setGrab, this, &Dial::setGrab);
-        QObject::connect(f, &Fin::mouseMoved, this, &Dial::slide);
-        //f->offset = int(angle*i) % 360;
+        f->installEventFilter(parent());
+        //QObject::connect(f, &Fin::setGrab, this, &Dial::setGrab);
+        //QObject::connect(f, &Fin::mouseMoved, this, &Dial::slide);
         f->hide();
-        //head = f;
         l->addFin(f);
-        //i++;
     }
 }
-
-// void Dial::loadVisible(Dial_Layout * l)
-// {
-//     Fin * f;
-//     while (l->canAddFin() && !l->fin_stack.isEmpty())
-//     {
-//         f = l->fin_stack.pop();
-//         l->visible.append(f);
-//         f->showUp();
-
-//     }
-//     if (l->visible.isEmpty()) {
-//         throw 1;
-//     }
-// }

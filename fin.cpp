@@ -19,8 +19,6 @@ int Fin::span = 30;
 
 Fin::Fin(QWidget *parent, QIcon* img, QString command) : QWidget(parent)
 {
-    //setMouseTracking(true);
-    //m = model;
     grab = 0;
     off = false;
     inner_res = res/1.5;
@@ -31,7 +29,6 @@ Fin::Fin(QWidget *parent, QIcon* img, QString command) : QWidget(parent)
         image = *img;
     }
     else {
-        //image = QImage("nothin");
         image = QIcon();
     }
     com = command;
@@ -46,7 +43,7 @@ void Fin::paintEvent(QPaintEvent *)
     //painter.setPen(Qt::NoPen);
     painter.setBrush(c);
     painter.drawPath(center);
-    QRectF source(0.0, 0.0, 64, 64);
+    //QRectF source(0.0, 0.0, 64, 64);
     QRectF target = center_img(image);
     circle = QPainterPath();
     circle.arcTo(target, 0, 360);
@@ -54,13 +51,13 @@ void Fin::paintEvent(QPaintEvent *)
     image.paint(&painter, target.toRect());
     QString ang_string;
     ang_string.setNum(loc_angle);
-    //painter.drawText(target, Qt::AlignCenter, ang_string);
+    painter.drawText(target, Qt::AlignCenter, ang_string);
     painter.end();
 }
 
 void Fin::make_path()
 {
-    loc_angle =angle+offset;
+    loc_angle = angle+offset;
     center = QPainterPath();
     center.arcMoveTo(bound, loc_angle);
     center.arcTo(bound, loc_angle, span);
@@ -99,34 +96,57 @@ QSize Fin::sizeHint() const
 }
 
 Fin::~Fin(){
-    center.~QPainterPath();
+    //center.~QPainterPath();
 }
 
-void Fin::mousePressEvent(QMouseEvent *event)
+
+bool Fin::handleEvent(QInputEvent *e)
+{
+    //qDebug() << "fin";
+    switch (e->type())
+    {
+    case QEvent::MouseButtonPress:
+        return mousePress(static_cast<QMouseEvent *>(e));
+    case QEvent::MouseButtonRelease:
+        return mouseRelease(static_cast<QMouseEvent *>(e));
+    case QEvent::MouseMove:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool Fin::mousePress(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
-        //event->pos().x() - offset.x(), event->pos().y() - offset.y()
         QPointF p(event->pos().x(), event->pos().y());
+        //qDebug()<<event->pos().x();
+        //qDebug() <<event->pos().y();
+        //qDebug() << center.boundingRect();
+
         if (center.contains(p))
         {
             std::cout << "Mouse grabbed by "+ com.toStdString()+'\n';
-            emit setGrab(true);
             grab_angle = calcAngle(event->pos(), res);
             event->accept();
+            setFocus(Qt::MouseFocusReason);
+            return true;
         }
         else
         {
             event->ignore();
+            return false;
         }
     }
     else
     {
         event->ignore();
+        return false;
     }
 }
 
-void Fin::mouseReleaseEvent(QMouseEvent *event)
+bool Fin::mouseRelease(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
@@ -134,10 +154,13 @@ void Fin::mouseReleaseEvent(QMouseEvent *event)
         {
                 startProgram();
                 event->accept();
+                return true;
         } else {
+            return true;
             event->ignore();
         }
     } else {
+        return true;
         event->ignore();
     }
 }
