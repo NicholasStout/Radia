@@ -102,23 +102,24 @@ void Dial_Layout::setAngle(QPoint p)
     Fin * rightFin = qobject_cast<Fin *>(list[right]->widget());
     float curr_angle = calcAngle(p, 500);
     float delta = curr_angle-angle;
+    //qDebug() << delta;
     if (delta != 0) {
         angle=curr_angle;
         leftFin->angle+=delta;
     }
-    // if (angle > 360 || angle < 0) {
-    //     angle = int(angle+360) % 360;
-    // }
-
-    // if (int(rightFin->loc_angle)%360 >= 180)
+    //if (leftFin->angle > 360 || leftFin->angle < 0) {
+    //    leftFin->angle = int(leftFin->angle+360) % 360;
+    //}
+    // if (int(leftFin->loc_angle)%360 >= 180)
     // {
     //     if (right > 0)
     //     {
     //         moveLeft();
     //     } else {
-    //         rightFin->angle = 179.95 - rightFin->offset;
+    //         rightFin->angle = 179.95 - leftFin->offset;
     //     }
-    // } else if ((int(leftFin->loc_angle) % 360) < 340 &&(int(leftFin->loc_angle) % 360) > 180)
+    // }
+    // else if ((int(leftFin->loc_angle) % 360) < 340 &&(int (leftFin->loc_angle) % 360) > 180)
     // {
     //     if (left < list.count())
     //     {
@@ -127,6 +128,17 @@ void Dial_Layout::setAngle(QPoint p)
     //         leftFin->angle = 340;
     //     }
     // }
+
+    if (int(leftFin->loc_angle)%360 >= 180)
+    {
+        if (right > 0) {moveLeft();}
+        else {leftFin->angle = 179.95 - leftFin->offset;}
+    }
+    else if (int(rightFin->loc_angle)%360 <= 0)
+    {
+        if (left < list.count()){moveRight();}
+        rightFin->angle = rightFin->offset+1;
+    }
 
     for (int i = right; i <= left; i++)
     {
@@ -181,7 +193,7 @@ void Dial_Layout::moveLeft()
     visible.prepend(hold);
     addFin(hold);
     */
-
+    qDebug() << "Moving Left";
     list[left]->widget()->hide();
     left++;
     float offset = qobject_cast<Fin *>(list[right]->widget())->offset;
@@ -211,12 +223,20 @@ void Dial_Layout::moveRight()
     addFin(hold);                          //add it to the layout
     hold->grabMouse();
     */
-
+    float back1 = qobject_cast<Fin *>(list[right]->widget())->offset;
+    float back2 = 0;
+    for (int i = right+1; i <= left+1; i++)
+    {
+        qDebug() << back1;
+        qDebug() << back2;
+        back2 = qobject_cast<Fin *>(list[right]->widget())->offset;
+        qobject_cast<Fin *>(list[right]->widget())->offset = back1;
+        back1 = back2;
+    }
     list[right]->widget()->hide();
     right++;
-    float offset = qobject_cast<Fin *>(list[left]->widget())->offset;
     left++;
-    qobject_cast<Fin *>(list[left]->widget())->offset = offset+angle;
+    //qobject_cast<Fin *>(list[left]->widget())->offset = offset+angle;
     list[left]->widget()->show();
 
 }
@@ -237,6 +257,7 @@ void Dial_Layout::loadVisible()
             newf->show();
             f = newf;
         }
+        left--;
     }
 }
 

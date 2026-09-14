@@ -86,7 +86,7 @@ bool Radia::eventFilter(QObject *object, QEvent *event)
 {
     if (auto *e = dynamic_cast<QInputEvent *>(event))
     {
-        qDebug() << event->type();
+        //qDebug() << event->type();
         return l->handleEvent(e);
     }
     return false;

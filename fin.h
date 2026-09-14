@@ -43,7 +43,7 @@ public:
     void mouseMoveEvent(QMouseEvent *event) override;
     QSize sizeHint() const override;
     QRectF center_img(QIcon img);
-    double get_loc_angle(){return loc_angle;}
+    double get_loc_angle(){return angle+loc_angle;}
     ~Fin();
 
     void showUp();

@@ -35,7 +35,7 @@ bool Dial::handleEvent(QInputEvent *e)
         {
         case QEvent::MouseButtonPress:
             grab = true;
-            angle = calcAngle(static_cast<QMouseEvent *>(e)->pos(), geometry().x());
+            angle = calcAngle(static_cast<QMouseEvent *>(e)->pos(), 500);
             l->angle = angle;
             //l->setAngle(static_cast<QMouseEvent *>(e)->pos());
             break;
@@ -45,7 +45,7 @@ bool Dial::handleEvent(QInputEvent *e)
         case QEvent::MouseMove:
             if (grab)
             {
-                angle = calcAngle(static_cast<QMouseEvent *>(e)->pos(), geometry().x());
+                angle = calcAngle(static_cast<QMouseEvent *>(e)->pos(), 500);
                 l->setAngle(static_cast<QMouseEvent *>(e)->pos());
             }
         default:
