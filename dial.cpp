@@ -1,6 +1,7 @@
 #include "dial.h"
 #include "dial_layout.h"
 #include "filehandler.h"
+#include "test_populator.h"
 
 void Dial::setBoundaryAngles(float start, float stop)
 {
@@ -14,6 +15,7 @@ Dial::Dial(QWidget *parent, QRect *size)
 {
     setGeometry(*size);
     populator = new FileHandler(); //This is leaking TODO: Move this to radia
+    //populator = new test_populator(8);
     l = new Dial_Layout(this);
     l->setGeometry(*size);
     setLayout(l);
@@ -36,7 +38,7 @@ bool Dial::handleEvent(QInputEvent *e)
         case QEvent::MouseButtonPress:
             grab = true;
             angle = calcAngle(static_cast<QMouseEvent *>(e)->pos(), 500);
-            l->angle = angle;
+            l->grabAngle = angle;
             //l->setAngle(static_cast<QMouseEvent *>(e)->pos());
             break;
         case QEvent::MouseButtonRelease:

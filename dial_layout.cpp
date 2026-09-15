@@ -100,44 +100,32 @@ void Dial_Layout::setAngle(QPoint p)
 {
     Fin * leftFin = qobject_cast<Fin *>(list[left]->widget());
     Fin * rightFin = qobject_cast<Fin *>(list[right]->widget());
+    float prev = grabAngle;
     float curr_angle = calcAngle(p, 500);
-    float delta = curr_angle-angle;
+    if(prev <= 1)
+    {
+        if (rightFin->angle > 300)
+            rightFin->angle = 0;
+        curr_angle = curr_angle-360;}
+    float delta = curr_angle-grabAngle;
     //qDebug() << delta;
     if (delta != 0) {
-        angle=curr_angle;
+        grabAngle=curr_angle;
         leftFin->angle+=delta;
     }
-    //if (leftFin->angle > 360 || leftFin->angle < 0) {
-    //    leftFin->angle = int(leftFin->angle+360) % 360;
-    //}
-    // if (int(leftFin->loc_angle)%360 >= 180)
-    // {
-    //     if (right > 0)
-    //     {
-    //         moveLeft();
-    //     } else {
-    //         rightFin->angle = 179.95 - leftFin->offset;
-    //     }
-    // }
-    // else if ((int(leftFin->loc_angle) % 360) < 340 &&(int (leftFin->loc_angle) % 360) > 180)
-    // {
-    //     if (left < list.count())
-    //     {
-    //         moveRight();
-    //     } else {
-    //         leftFin->angle = 340;
-    //     }
-    // }
-
+    qDebug() << "---------";
+    qDebug() << curr_angle;
+    qDebug() << qobject_cast<Fin *>(list[right]->widget())->angle;
+    int finAngle = int(rightFin->loc_angle)%360;
     if (int(leftFin->loc_angle)%360 >= 180)
     {
-        if (right > 0) {moveLeft();}
+        if (right > 0 && list.count()>num_visible) {moveLeft();}
         else {leftFin->angle = 179.95 - leftFin->offset;}
     }
-    else if (int(rightFin->loc_angle)%360 <= 0)
+    else if (finAngle <=-25 || finAngle == 235)
     {
-        if (left < list.count()){moveRight();}
-        rightFin->angle = rightFin->offset+1;
+        if (left < list.count()-1&& list.count()>num_visible){moveRight();}
+        else {rightFin->angle = rightFin->offset+1;}
     }
 
     for (int i = right; i <= left; i++)
@@ -178,65 +166,50 @@ void Dial_Layout::slide(QMouseEvent* e)
 
 void Dial_Layout::moveLeft()
 {
-    /*
-    printf("Move left\n");
-    Fin * hold = visible.takeLast();
-    removeFin(hold);
-    hold->hide();
-    fin_stack.push(hold);
-    hold = fout_stack.pop();
-    //hold->offset = visible.first()->offset-layout->angle;
-    visible.front()->setParent(hold);
-    hold->setParent(p);
-    hold->show();
+    qobject_cast<Fin *>(list[left]->widget())->angle=0;
 
-    visible.prepend(hold);
-    addFin(hold);
-    */
-    qDebug() << "Moving Left";
+    float back1 = qobject_cast<Fin *>(list[left]->widget())->offset;
+    float back2 = 0;
+
+    for (int i = left-1; i >= right-1; i--)
+    {
+        back2 = qobject_cast<Fin *>(list[i]->widget())->offset;
+        qobject_cast<Fin *>(list[i]->widget())->offset = back1;
+        back1 = back2;
+    }
+
+    list[left]->widget()->hide();
+    left--;
+    right--;
+    list[right]->widget()->show();
+
+/**
     list[left]->widget()->hide();
     left++;
     float offset = qobject_cast<Fin *>(list[right]->widget())->offset;
     right++;
     qobject_cast<Fin *>(list[right]->widget())->offset = offset+angle;
     list[right]->widget()->show();
+**/
 }
 
 void Dial_Layout::moveRight()
 {
-    /*
-    printf("Move right\nthis");
-    Fin * hold = visible.takeFirst();         // take the fin we wish to remove and hold it
-    if (hold->grab) {
-        visible.first()->grab = 1;
-    }
-    visible.first()->setParent(p);          // set the next fin to be the child of the MainWindow
-    visible.first()->show();                //show it or they will all go away
-    removeFin(hold);                         //remove the held fin
-    hold->hide();                           // hide it
-    fout_stack.push(hold);                  // save it for later
-    hold = fin_stack.pop();                //pop one off of the stack for the other en
-    //hold->setParent(visible.back());     // set it's paraent to be the last fin
-    hold->show();                          // show it
-    //hold->offset = visible.back()->offset+layout->angle; //set its angle
-    visible.append(hold);                  // add it to the list of visible fins
-    addFin(hold);                          //add it to the layout
-    hold->grabMouse();
-    */
+    qobject_cast<Fin *>(list[right]->widget())->angle=0;
+
     float back1 = qobject_cast<Fin *>(list[right]->widget())->offset;
     float back2 = 0;
+
     for (int i = right+1; i <= left+1; i++)
     {
-        qDebug() << back1;
-        qDebug() << back2;
-        back2 = qobject_cast<Fin *>(list[right]->widget())->offset;
-        qobject_cast<Fin *>(list[right]->widget())->offset = back1;
+        back2 = qobject_cast<Fin *>(list[i]->widget())->offset;
+        qobject_cast<Fin *>(list[i]->widget())->offset = back1;
         back1 = back2;
     }
+
     list[right]->widget()->hide();
     right++;
     left++;
-    //qobject_cast<Fin *>(list[left]->widget())->offset = offset+angle;
     list[left]->widget()->show();
 
 }

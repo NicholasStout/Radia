@@ -52,7 +52,7 @@ bool radia_layout::handleEvent(QInputEvent *e)
 
 void radia_layout::setUpperDial(Dial *d)
 {
-    d->setBoundaryAngles(0, 180);
+    d->setBoundaryAngles(180, 0);
     d->installEventFilter(parent());
     QLayout::addWidget(d);
 

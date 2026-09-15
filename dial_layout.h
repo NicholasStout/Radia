@@ -14,6 +14,7 @@ class Dial_Layout : public QLayout
 //    Q_OBJECT
 public:
     float angle;
+    float grabAngle;
     bool grab;
 
 

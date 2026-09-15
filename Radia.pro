@@ -34,7 +34,8 @@ SOURCES += \
         radia.cpp \
     model.cpp \
     fin.cpp \
-    radia_layout.cpp
+    radia_layout.cpp \
+    test_populator.cpp
 
 HEADERS += \
     dial.h \
@@ -45,7 +46,8 @@ HEADERS += \
         radia.h \
     model.h \
     fin.h \
-    radia_layout.h
+    radia_layout.h \
+    test_populator.h
 
 FORMS += \
         radia.ui
