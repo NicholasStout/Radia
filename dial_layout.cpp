@@ -108,24 +108,20 @@ void Dial_Layout::setAngle(QPoint p)
             rightFin->angle = 0;
         curr_angle = curr_angle-360;}
     float delta = curr_angle-grabAngle;
-    //qDebug() << delta;
     if (delta != 0) {
         grabAngle=curr_angle;
         leftFin->angle+=delta;
     }
-    qDebug() << "---------";
-    qDebug() << curr_angle;
-    qDebug() << qobject_cast<Fin *>(list[right]->widget())->angle;
     int finAngle = int(rightFin->loc_angle)%360;
-    if (int(leftFin->loc_angle)%360 >= 180)
+    if (int(leftFin->loc_angle)%360 >= stopAng+angle)
     {
         if (right > 0 && list.count()>num_visible) {moveLeft();}
-        else {leftFin->angle = 179.95 - leftFin->offset;}
+        else {leftFin->angle = stopAng - leftFin->offset;}
     }
-    else if (finAngle <=-25 || finAngle == 235)
+    else if (finAngle <=startAng-angle)// || finAngle == 235)
     {
         if (left < list.count()-1&& list.count()>num_visible){moveRight();}
-        else {rightFin->angle = rightFin->offset+1;}
+        else {rightFin->angle = rightFin->offset+1+startAng;}
     }
 
     for (int i = right; i <= left; i++)
@@ -134,34 +130,6 @@ void Dial_Layout::setAngle(QPoint p)
         f->update();
     }
 
-}
-/**
-float Dial_Layout::calcAngle(QPoint c, int res)
-{
-    double x = c.x()-(res/2);
-    double ang = radToDeg(atan(((c.y()*-1)+(res/2))/x)); //Mmmm Pi
-    if (c.x() < res/2) {
-        ang+=180;
-    } else if (c.y() >= (res/2.0)) {
-        ang+=360;
-    }
-    return ang;
-}
-**/
-
-void Dial_Layout::setGrab(bool msg)
-{
-    grab = msg;
-}
-
-void Dial_Layout::slide(QMouseEvent* e)
-{
-
-    QMouseEvent *event = (QMouseEvent*) e;
-    event->accept();
-    printf("Grabbed in dial %d,%d\n", event->pos().x(), event->y());
-    setAngle(event->pos());
-    parentWidget()->repaint();
 }
 
 void Dial_Layout::moveLeft()
@@ -239,7 +207,6 @@ bool Dial_Layout::handleEvent(QInputEvent *e)
     bool ret = false;
     for (int i = right; i <= left; i++)
     {
-        //qDebug()<<i;
         Fin * f = static_cast<Fin *>(list[i]->widget());
         if(f->handleEvent(e))
         {

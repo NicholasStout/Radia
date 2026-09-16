@@ -24,6 +24,7 @@ public:
     Fin f;
     radia_layout *l;
     Dial *upper;
+    Dial *lower;
     //Model * m;
 
     explicit Radia(QWidget *parent = nullptr);

@@ -1,18 +1,16 @@
 #include "dial.h"
 #include "dial_layout.h"
 #include "filehandler.h"
-#include "test_populator.h"
 
 void Dial::setBoundaryAngles(float start, float stop)
 {
-    startAng = start; //TODO: Delete
-    stopAng = stop; //TODO: Delete
     l->setSpan(start, stop);
 }
 
 Dial::Dial(QWidget *parent, QRect *size)
     : QWidget{parent}
 {
+    grab = false;
     setGeometry(*size);
     populator = new FileHandler(); //This is leaking TODO: Move this to radia
     //populator = new test_populator(8);
@@ -29,6 +27,7 @@ void Dial::setPopulator(IPopulator *newPopulator)
 
 bool Dial::handleEvent(QInputEvent *e)
 {
+    qDebug() << grab;
     bool ret = false;
     if (l->handleEvent(e))
     {

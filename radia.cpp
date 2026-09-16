@@ -31,31 +31,21 @@ Radia::Radia(QWidget *parent) :
     setGeometry(start);
     start.setHeight(500);
     upper = new Dial(this, &start);
+    lower = new Dial(this, &start);
     setFixedHeight(500);
     setFixedWidth(500);
     l->setGeometry(start);
     l->setUpperDial(upper);
+    l->setLowerDial(lower);
 }
 
 void Radia::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
     printf("%d,%d\n", event->pos().x(), event->y());
-    //upper->setAngle(event->pos());
     repaint();
 }
 
-//void Radia::paintEvent(QPaintEvent *)
-//{
-//    QPainter painter(this);
-//    painter.setRenderHint(QPainter::Antialiasing);
-//    QColor c(127, 0, 127);
-//    painter.setPen(Qt::NoPen);
-//    painter.setBrush(c);
-//    QPainterPath center;
-//    painter.drawPath(center);
-//    painter.end();
-//}
 
 void Radia::mousePressEvent(QMouseEvent *event)
 {
