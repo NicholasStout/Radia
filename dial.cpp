@@ -14,7 +14,7 @@ Dial::Dial(QWidget *parent, QRect *size)
     setGeometry(*size);
     populator = new FileHandler(); //This is leaking TODO: Move this to radia
     //populator = new test_populator(8);
-    l = new Dial_Layout(this);
+    l = new Dial_Layout(this, &fr);
     l->setGeometry(*size);
     setLayout(l);
     createFins();
@@ -27,7 +27,7 @@ void Dial::setPopulator(IPopulator *newPopulator)
 
 bool Dial::handleEvent(QInputEvent *e)
 {
-    qDebug() << grab;
+    //qDebug() << grab;
     bool ret = false;
     if (l->handleEvent(e))
     {
@@ -63,7 +63,7 @@ void Dial::createFins()
     QListIterator<FinDetails> it(finList);
     while(it.hasNext()) {
         FinDetails deetz = it.next();
-        Fin * f = new Fin(head, &deetz.ico, deetz.exec);
+        Fin * f = new Fin(head, deetz, &fr);
         f->installEventFilter(parent());
         //QObject::connect(f, &Fin::setGrab, this, &Dial::setGrab);
         //QObject::connect(f, &Fin::mouseMoved, this, &Dial::slide);

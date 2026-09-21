@@ -21,7 +21,7 @@ class Radia : public QWidget
 public:
     QRect container;
     QPainter * painter;
-    Fin f;
+    //Fin f;
     radia_layout *l;
     Dial *upper;
     Dial *lower;

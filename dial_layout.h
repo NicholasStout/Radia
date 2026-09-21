@@ -8,17 +8,19 @@
 #include <QEvent>
 #include <QtSvg/QSvgRenderer>
 #include "fin.h"
+#include "finrender.h"
 
 class Dial_Layout : public QLayout
 {
 //    Q_OBJECT
 public:
-    float angle;
+    //float angle;
     float grabAngle;
+    float finAngle;
     bool grab;
 
 
-    Dial_Layout(QWidget* parent = nullptr);
+    Dial_Layout(QWidget* parent = nullptr, FinRender* fr = nullptr);
     void addItem(QLayoutItem *item) override;
     void addFin(Fin *f);
     void removeFin(QString name);
@@ -41,6 +43,7 @@ public:
     QList<QLayoutItem *> list;
     QWidget* p;
     bool handleEvent(QInputEvent *e);
+    float& getAngle() {return finAngle;}
 
 public slots:
     void setGrab(bool msg);
@@ -51,7 +54,8 @@ private:
     int click_angle;
     int res;
     int left, right, num_visible;
-    float startAng, stopAng;
+    //float startAng, stopAng;
+    FinRender *rend;
 
     //bool event(QEvent * e);
     //void mouseMoveEvent(QMouseEvent *event);

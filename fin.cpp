@@ -1,42 +1,37 @@
 #include "fin.h"
 #include <iostream>
 #include <cmath>
-//#include <model.h>
-//#include "dial_layout.h"
-
-
 
 /*
  * This class is to be the radial widget that encircles the center widget. When this widget is clicked, the program it is representing launches.
  * */
 
-double Fin::angle = 5;
-double Fin::grab_angle = 0;
 int Fin::res = 500;
 int Fin::x = 0;
 int Fin::y = 0;
-int Fin::span = 30;
+float Fin::grab_angle = 0;
 
-Fin::Fin(QWidget *parent, QIcon* img, QString command) : QWidget(parent)
+Fin::Fin(QWidget *parent, FinDetails fd, FinRender *fr)
+ : QWidget(parent)
 {
+    grab_angle = 0;
+    det = fd;
+    rend = fr;
+    span = rend->getSpan();
     grab = 0;
     off = false;
     inner_res = res/1.5;
     bound = QRectF(x,y,res,res);
     bound2 = QRectF(((inner_res+x)*.25), ((inner_res+y)*.25),inner_res, inner_res);
     setGeometry(x,y, res, res);
-    if (img && !img->isNull()) {
-        image = *img;
-    }
-    else {
-        image = QIcon();
-    }
-    com = command;
+
 }
+
 
 void Fin::paintEvent(QPaintEvent *)
 {
     make_path();
+    //qDebug() << rend->getAngle();
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     QColor c(127, 0, 127);
@@ -44,11 +39,11 @@ void Fin::paintEvent(QPaintEvent *)
     painter.setBrush(c);
     painter.drawPath(center);
     //QRectF source(0.0, 0.0, 64, 64);
-    QRectF target = center_img(image);
+    QRectF target = center_img(det.ico);
     circle = QPainterPath();
     circle.arcTo(target, 0, 360);
     painter.setClipPath(circle);
-    image.paint(&painter, target.toRect());
+    det.ico.paint(&painter, target.toRect());
     QString ang_string;
     ang_string.setNum(loc_angle);
     painter.drawText(target, Qt::AlignCenter, ang_string);
@@ -57,7 +52,8 @@ void Fin::paintEvent(QPaintEvent *)
 
 void Fin::make_path()
 {
-    loc_angle = angle+offset;
+    int span = rend->getSpan();
+    loc_angle = rend->getAngle()+offset;
     center = QPainterPath();
     center.arcMoveTo(bound, loc_angle);
     center.arcTo(bound, loc_angle, span);
@@ -71,7 +67,7 @@ QRectF Fin::center_img(QIcon img)
     //Sos the algo is this:
     QSize size = img.actualSize(QSize(64,64));
     int r = int ((res+inner_res)/4); //Take the average of the radii
-    double rad = degToRad(loc_angle+(span/2));
+    double rad = degToRad(loc_angle+(rend->getSpan()/2));
     int centeredx = ((res+x)/2)-(size.width()/2);
     int centeredy = ((res+y)/2)-(size.height()/2);
     int i_x = int (r*cos(-rad)+centeredx); //move from radial to cartesian and adjust for placement
@@ -121,9 +117,6 @@ bool Fin::mousePress(QMouseEvent *event)
     if (event->button() == Qt::LeftButton)
     {
         QPointF p(event->pos().x(), event->pos().y());
-        //qDebug()<<event->pos().x();
-        //qDebug() <<event->pos().y();
-        //qDebug() << center.boundingRect();
 
         if (center.contains(p))
         {

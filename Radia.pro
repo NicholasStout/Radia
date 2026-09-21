@@ -29,6 +29,7 @@ SOURCES += \
     dial.cpp \
     dial_layout.cpp \
     filehandler.cpp \
+    finrender.cpp \
     input_handler.cpp \
         main.cpp \
         radia.cpp \
@@ -41,6 +42,7 @@ HEADERS += \
     dial.h \
     dial_layout.h \
     filehandler.h \
+    finrender.h \
     input_handler.h \
     ipopulator.h \
         radia.h \

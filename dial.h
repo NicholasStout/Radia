@@ -26,6 +26,7 @@ signals:
 
 private:
     IPopulator *populator;
+    FinRender fr;
     void createFins();
     void loadVisible(Dial_Layout * l);
     Dial_Layout * l;

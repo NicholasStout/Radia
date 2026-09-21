@@ -5,14 +5,15 @@
 /* Sublayout to handle the dials on the top and bottom of the UI
  */
 
-Dial_Layout::Dial_Layout(QWidget* parent) :
+Dial_Layout::Dial_Layout(QWidget* parent, FinRender* fr) :
     QLayout(parent)
 {
-    angle = 25;
-    startAng = 0;
-    stopAng = 180;
-    setGeometry(parent->geometry());
-    num_visible = (stopAng-startAng)/(angle+5);
+
+    rend = fr;
+    rend->setAngle(0);
+    rend->setSpan(25);
+    //setGeometry(parent->geometry());
+    num_visible = (rend->getStop()-rend->getStart())/(rend->getAngle()+5);
 }
 void Dial_Layout::addItem(QLayoutItem* item)
 {
@@ -52,21 +53,22 @@ void Dial_Layout::setGeometry(const QRect &r)
         for (; itr != list.end(); itr++) {
             f = qobject_cast<Fin *>((*itr)->widget());
             f->setGeometry(r);
-            f->span = angle-5;
+            //f->span = angle-5;
         }
     }
 }
 void Dial_Layout::setGeometry(const QRect &r, float ang)
 {
-    angle = ang;
+    rend->setAngle(ang);
     setGeometry(r);
 }
 
 void Dial_Layout::setSpan(float start, float stop)
 {
-    startAng = start;
-    stopAng = stop;
-    num_visible = std::abs(startAng-stopAng)/(angle+5);
+    rend->setStart(start);
+    rend->setStop(stop);
+    qDebug() << rend->getStop();
+    num_visible = std::abs(start-stop)/(rend->getSpan()+5);
     loadVisible();
 }
 QSize Dial_Layout::sizeHint() const
@@ -93,7 +95,7 @@ int Dial_Layout::count() const
 bool Dial_Layout::canAddFin()
 {
 
-    return ((right-left) < (180/angle));
+    return ((right-left) < (180/rend->getAngle()));
 }
 
 void Dial_Layout::setAngle(QPoint p)
@@ -104,24 +106,25 @@ void Dial_Layout::setAngle(QPoint p)
     float curr_angle = calcAngle(p, 500);
     if(prev <= 1)
     {
-        if (rightFin->angle > 300)
-            rightFin->angle = 0;
+        if (rend->getAngle() > 300)
+            rend->setAngle(0);
         curr_angle = curr_angle-360;}
     float delta = curr_angle-grabAngle;
     if (delta != 0) {
         grabAngle=curr_angle;
-        leftFin->angle+=delta;
+        rend->setAngle(rend->getAngle()+delta);
     }
-    int finAngle = int(rightFin->loc_angle)%360;
-    if (int(leftFin->loc_angle)%360 >= stopAng+angle)
+    qDebug() << rend->getStop();
+    int finAngle = int(rightFin->get_loc_angle())%360;
+    if (int(leftFin->get_loc_angle())%360 >= rend->getStop()+rend->getSpan())
     {
         if (right > 0 && list.count()>num_visible) {moveLeft();}
-        else {leftFin->angle = stopAng - leftFin->offset;}
+        else {rend->setAngle(rend->getStop() - leftFin->offset);}
     }
-    else if (finAngle <=startAng-angle)// || finAngle == 235)
+    else if (finAngle <=rend->getStart()-rend->getSpan())
     {
         if (left < list.count()-1&& list.count()>num_visible){moveRight();}
-        else {rightFin->angle = rightFin->offset+1+startAng;}
+        else {rend->setAngle(rightFin->offset+1+rend->getStart());}
     }
 
     for (int i = right; i <= left; i++)
@@ -129,13 +132,13 @@ void Dial_Layout::setAngle(QPoint p)
         Fin * f = static_cast<Fin *>(list[i]->widget());
         f->update();
     }
-
 }
 
 void Dial_Layout::moveLeft()
 {
-    qobject_cast<Fin *>(list[left]->widget())->angle=0;
-
+    //qDebug()<<"move left";
+    //qobject_cast<Fin *>(list[left]->widget())->angle=0;
+    rend->setAngle(0);
     float back1 = qobject_cast<Fin *>(list[left]->widget())->offset;
     float back2 = 0;
 
@@ -150,21 +153,13 @@ void Dial_Layout::moveLeft()
     left--;
     right--;
     list[right]->widget()->show();
-
-/**
-    list[left]->widget()->hide();
-    left++;
-    float offset = qobject_cast<Fin *>(list[right]->widget())->offset;
-    right++;
-    qobject_cast<Fin *>(list[right]->widget())->offset = offset+angle;
-    list[right]->widget()->show();
-**/
 }
 
 void Dial_Layout::moveRight()
 {
-    qobject_cast<Fin *>(list[right]->widget())->angle=0;
-
+    //qDebug()<<"move right";
+    //qobject_cast<Fin *>(list[right]->widget())->angle=0;
+    rend->setAngle(0);
     float back1 = qobject_cast<Fin *>(list[right]->widget())->offset;
     float back2 = 0;
 
@@ -187,14 +182,14 @@ void Dial_Layout::loadVisible()
     right = 0;
     if (list.count() > 0) {
         Fin * f = qobject_cast<Fin *>(list[0]->widget());
-        f->offset = startAng;
+        f->offset = rend->getStart();
         f->show();
 
         int num = (num_visible < list.count()) ? num_visible : list.count()-1;
         for (left = 1; left <= num; left++)
         {
             Fin * newf = qobject_cast<Fin *>(list[left]->widget());
-            newf->offset =  f->offset + (angle);
+            newf->offset =  f->offset + (rend->getSpan());
             newf->show();
             f = newf;
         }

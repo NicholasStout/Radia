@@ -3,17 +3,17 @@
 
 #include <QWidget>
 #include <QtWidgets>
+#include "finrender.h"
+#include "ipopulator.h"
 
 class Fin : public QWidget
 {
     Q_OBJECT
 public:
-    static double angle;
-    static int span;
     static int res;
     static int x;
     static int y;
-    static double grab_angle;
+    static float grab_angle;
 
     int offset;
     double loc_angle;
@@ -25,8 +25,12 @@ public:
     bool off;
     double ang_check;
     int event_id;
+    float span;
 
-    explicit Fin(QWidget *parent = nullptr, QIcon* img = nullptr,  QString command = nullptr);
+    FinDetails det;
+    FinRender *rend;
+
+    explicit Fin(QWidget *parent, FinDetails fd, FinRender* fr = nullptr);
     void paintEvent(QPaintEvent *) override;
     void setContainer(QRect box) {container = box;}
     QPainterPath center;
@@ -43,7 +47,7 @@ public:
     void mouseMoveEvent(QMouseEvent *event) override;
     QSize sizeHint() const override;
     QRectF center_img(QIcon img);
-    double get_loc_angle(){return angle+loc_angle;}
+    double get_loc_angle(){return rend->getAngle()+offset;}
     ~Fin();
 
     void showUp();
@@ -78,6 +82,7 @@ static float calcAngle(QPoint c, int res)
         }
         return ang;
     }
+
 
 
 
