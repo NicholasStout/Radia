@@ -10,21 +10,13 @@ class Dial : public QWidget
     Q_OBJECT
 public:
     void setBoundaryAngles(float start, float stop);
-    float angle;
-    bool grab;
     explicit Dial(QWidget *parent = nullptr, QRect * size = nullptr);
-
     void setPopulator(IPopulator *newPopulator);
-    //void mouseMoveEvent(QMouseEvent *event) override;
-
     bool handleEvent(QInputEvent *e);
-signals:
-
-//public slots:
-//    void setGrab(bool msg);
-//    void slide(QMouseEvent* e);
 
 private:
+    float angle;
+    bool grab;
     IPopulator *populator;
     FinRender fr;
     void createFins();

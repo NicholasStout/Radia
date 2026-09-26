@@ -3,7 +3,6 @@
 
 #include <QLayout>
 #include <QWidget>
-#include <QtWidgets>
 #include <QList>
 #include <QEvent>
 #include <QtSvg/QSvgRenderer>
@@ -22,21 +21,17 @@ public:
 
     Dial_Layout(QWidget* parent = nullptr, FinRender* fr = nullptr);
     void addItem(QLayoutItem *item) override;
-    void addFin(Fin *f);
-    void removeFin(QString name);
     void setGeometry(const QRect &r) override;
-    void setGeometry(const QRect &r, float ang);
-    void setSpan(float start, float stop);
     QSize sizeHint() const override;
     QLayoutItem * itemAt(int index) const override;
     QLayoutItem * takeAt(int index) override;
     int count() const override;
+    void addFin(Fin *f);
+    void removeFin(QString name);
+    void setGeometry(const QRect &r, float ang);
+    void setSpan(float start, float stop);
     bool canAddFin();
-    //bool hasHeightForWidth();
-    //int heightForWidth();
-    //Moving certain functions from model.h here
     void setAngle(QPoint p);
-    //static float calcAngle(QPoint c, int res);
     void moveLeft();
     void moveRight();
     void loadVisible();

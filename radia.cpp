@@ -6,7 +6,7 @@
 Radia::Radia(QWidget *parent) :
     QWidget(parent)
 {
-    //setAttribute(Qt::WA_TranslucentBackground, true);
+    setAttribute(Qt::WA_TranslucentBackground, true);
     setWindowFlags(Qt::FramelessWindowHint);
 
     //set screen invisble and frameless
@@ -22,18 +22,19 @@ Radia::Radia(QWidget *parent) :
     setMouseTracking(false);
     l = new radia_layout(this);
     //setLayout(l);
-    QSize size = QSize(500, 500);
+    QSize size = QSize(w, h);
 
     //Get demensions for the launcher
 
-    QRect start = QRect(QPoint(QCursor::pos().rx()-500,QCursor::pos().ry()-500), size);
+    QRect start = QRect(QPoint(QCursor::pos().rx()-5,QCursor::pos().ry()-250), size);
     printf("%d", QCursor::pos().rx());
     setGeometry(start);
     start.setHeight(500);
-    upper = new Dial(this, &start);
-    lower = new Dial(this, &start);
     setFixedHeight(500);
     setFixedWidth(500);
+
+    upper = new Dial(this, &start);
+    lower = new Dial(this, &start);
     l->setGeometry(start);
     l->setUpperDial(upper);
     l->setLowerDial(lower);

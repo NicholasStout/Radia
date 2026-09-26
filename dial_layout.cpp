@@ -15,13 +15,11 @@ Dial_Layout::Dial_Layout(QWidget* parent, FinRender* fr) :
     //setGeometry(parent->geometry());
     num_visible = (rend->getStop()-rend->getStart())/(rend->getAngle()+5);
 }
+
 void Dial_Layout::addItem(QLayoutItem* item)
 {
     list.append(item);
- }
-
-
-
+}
 
 void Dial_Layout::addFin(Fin *f)
 {
@@ -57,6 +55,7 @@ void Dial_Layout::setGeometry(const QRect &r)
         }
     }
 }
+
 void Dial_Layout::setGeometry(const QRect &r, float ang)
 {
     rend->setAngle(ang);
@@ -71,6 +70,7 @@ void Dial_Layout::setSpan(float start, float stop)
     num_visible = std::abs(start-stop)/(rend->getSpan()+5);
     loadVisible();
 }
+
 QSize Dial_Layout::sizeHint() const
 {
     return QSize(500, 500);
@@ -92,6 +92,7 @@ int Dial_Layout::count() const
 {
     return list.count();
 }
+
 bool Dial_Layout::canAddFin()
 {
 
