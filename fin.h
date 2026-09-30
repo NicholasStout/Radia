@@ -3,17 +3,17 @@
 
 #include <QWidget>
 #include <QtWidgets>
+#include "finrender.h"
+#include "ipopulator.h"
 
 class Fin : public QWidget
 {
     Q_OBJECT
 public:
-    static double angle;
-    static int span;
     static int res;
     static int x;
     static int y;
-    static double grab_angle;
+    static float grab_angle;
 
     int offset;
     double loc_angle;
@@ -25,28 +25,35 @@ public:
     bool off;
     double ang_check;
     int event_id;
+    float span;
 
-    explicit Fin(QWidget *parent = nullptr, QObject * model = nullptr, QImage* img = nullptr,  QString command = nullptr);
-    void paintEvent(QPaintEvent *);
+    FinDetails det;
+    FinRender *rend;
+
+    explicit Fin(QWidget *parent, FinDetails fd, FinRender* fr = nullptr);
+    void paintEvent(QPaintEvent *) override;
     void setContainer(QRect box) {container = box;}
     QPainterPath center;
     QPainterPath circle;
-    QImage image;
+    QIcon image;
     QObject* m;
     QString com;
 
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
+    bool handleEvent(QInputEvent *e);
+
+    bool mousePress(QMouseEvent *event);
+    bool mouseRelease(QMouseEvent *event);
     void make_path();
-    void mouseMoveEvent(QMouseEvent *event);
-    QSize sizeHint() const;
-    QRectF center_img(QImage img);
-    double get_loc_angle(){return loc_angle;}
+    void mouseMoveEvent(QMouseEvent *event) override;
+    QSize sizeHint() const override;
+    QRectF center_img(QIcon img);
+    double get_loc_angle(){return rend->getAngle()+offset;}
     ~Fin();
 
+    void showUp();
 signals:
     void setGrab(bool g);
-    void mouseMoved(QEvent* e);
+    void mouseMoved(QMouseEvent* e);
 
 public slots:
 private:
@@ -75,6 +82,7 @@ static float calcAngle(QPoint c, int res)
         }
         return ang;
     }
+
 
 
 

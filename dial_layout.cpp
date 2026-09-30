@@ -1,33 +1,47 @@
+#include <cstdlib>
 #include "dial_layout.h"
-//#include <QObject>
+
 
 /* Sublayout to handle the dials on the top and bottom of the UI
  */
 
-Dial_Layout::Dial_Layout(QWidget* parent) :
+Dial_Layout::Dial_Layout(QWidget* parent, FinRender* fr) :
     QLayout(parent)
 {
-    angle = 35;
-    populateList(parent);
+
+    rend = fr;
+    rend->setAngle(0);
+    rend->setSpan(25);
+    //setGeometry(parent->geometry());
+    num_visible = (rend->getStop()-rend->getStart())/(rend->getAngle()+5);
 }
-void Dial_Layout::addItem(QLayoutItem *item)
+
+void Dial_Layout::addItem(QLayoutItem* item)
 {
     list.append(item);
 }
+
 void Dial_Layout::addFin(Fin *f)
 {
-    f->show();
-    addItem(new QWidgetItem(f));
+    addWidget(f);
 }
-void Dial_Layout::removeFin(Fin *f)
+
+void Dial_Layout::removeFin(QString name)
 {
-    f->hide();
-    for (QLayoutItem * i : list) {
-        if (i->widget() == f) {
-            list.removeOne(i);
+
+    for (QList<QLayoutItem*>::iterator it = list.begin();
+         it != list.end();
+         ++it)
+    {
+        QLayoutItem *item = *it;
+
+        if (item->widget() && item->widget()->objectName() == name) {
+            list.erase(it);
+            break;
         }
     }
 }
+
 void Dial_Layout::setGeometry(const QRect &r)
 {
     if (r.width() == r.height())
@@ -35,225 +49,168 @@ void Dial_Layout::setGeometry(const QRect &r)
         QList<QLayoutItem *>::iterator itr = list.begin();
         Fin *f;
         for (; itr != list.end(); itr++) {
-            f = (Fin *)(*itr)->widget();
+            f = qobject_cast<Fin *>((*itr)->widget());
             f->setGeometry(r);
-            f->span = angle-5;
+            //f->span = angle-5;
         }
-    }upper->
+    }
 }
+
 void Dial_Layout::setGeometry(const QRect &r, float ang)
 {
-    angle = ang;
+    rend->setAngle(ang);
     setGeometry(r);
 }
+
+void Dial_Layout::setSpan(float start, float stop)
+{
+    rend->setStart(start);
+    rend->setStop(stop);
+    qDebug() << rend->getStop();
+    num_visible = std::abs(start-stop)/(rend->getSpan()+5);
+    loadVisible();
+}
+
 QSize Dial_Layout::sizeHint() const
 {
     return QSize(500, 500);
 }
-QLayoutItem * Dial_Layout::itemAt(int index) const
+
+QLayoutItem *Dial_Layout::itemAt(int index) const
 {
-    if (index > 0 && index < list.size())
-        return list.at(index);
-    else
-        return 0;
+    if (index >= list.count())
+        return nullptr;
+    return list.at(index);
 }
-QLayoutItem * Dial_Layout::takeAt(int index)
+
+QLayoutItem *Dial_Layout::takeAt(int index)
 {
-    if (index > 0 && index < list.size())
-        return list.takeAt(index);
-    else
-        return 0;
+    return list.takeAt(index);
 }
+
 int Dial_Layout::count() const
 {
-    return list.size();
+    return list.count();
 }
+
 bool Dial_Layout::canAddFin()
 {
-    return (list.size() < (180/angle));
+
+    return ((right-left) < (180/rend->getAngle()));
 }
 
 void Dial_Layout::setAngle(QPoint p)
 {
-    float curr_angle = calcAngle(p, res);
-    float delta = curr_angle-grab_angle;
-    //printf("%d,%d ", p.x(), p.y());
+    Fin * leftFin = qobject_cast<Fin *>(list[left]->widget());
+    Fin * rightFin = qobject_cast<Fin *>(list[right]->widget());
+    float prev = grabAngle;
+    float curr_angle = calcAngle(p, 500);
+    if(prev <= 1)
+    {
+        if (rend->getAngle() > 300)
+            rend->setAngle(0);
+        curr_angle = curr_angle-360;}
+    float delta = curr_angle-grabAngle;
     if (delta != 0) {
-        angle+=delta;
-        grab_angle=curr_angle;
+        grabAngle=curr_angle;
+        rend->setAngle(rend->getAngle()+delta);
     }
-    if (angle > 360 || angle < 0) {
-        angle = int(angle+360) % 360;
-    }
-
-    if (int(visible.last()->loc_angle)%360 >= 180)
+    qDebug() << rend->getStop();
+    int finAngle = int(rightFin->get_loc_angle())%360;
+    if (int(leftFin->get_loc_angle())%360 >= rend->getStop()+rend->getSpan())
     {
-        if (!fout_stack.isEmpty())
-        {
-            moveLeft();
-        } else {
-            visible.last()->angle = 179.95 - visible.last()->offset;
-        }
-    } else if ((int(visible.first()->loc_angle) % 360) < 340 &&(int(visible.first()->loc_angle) % 360) > 180)
+        if (right > 0 && list.count()>num_visible) {moveLeft();}
+        else {rend->setAngle(rend->getStop() - leftFin->offset);}
+    }
+    else if (finAngle <=rend->getStart()-rend->getSpan())
     {
-        if (!fin_stack.isEmpty())
-        {
-            moveRight();
-        } else {
-            visible.first()->angle = 340;
-        }
+        if (left < list.count()-1&& list.count()>num_visible){moveRight();}
+        else {rend->setAngle(rightFin->offset+1+rend->getStart());}
     }
 
-}
-
-float Dial_Layout::calcAngle(QPoint c, int res)
-{
-    double x = c.x()-(res/2);
-    double ang = radToDeg(atan(((c.y()*-1)+(res/2))/x)); //Mmmm Pi
-    if (c.x() < res/2) {
-        ang+=180;
-    } else if (c.y() >= (res/2.0)) {
-        ang+=360;
+    for (int i = right; i <= left; i++)
+    {
+        Fin * f = static_cast<Fin *>(list[i]->widget());
+        f->update();
     }
-    return ang;
-}
-
-void Dial_Layout::setGrab(bool msg)
-{
-    grab = msg;
-}
-
-void Dial_Layout::slide(QEvent *e)
-{
-
-    QMouseEvent *event = (QMouseEvent*) e;
-    event->accept();
-    printf("%d,%d\n", event->pos().x(), event->y());
-    upper->setAngle(event->pos());
-    repaint();
 }
 
 void Dial_Layout::moveLeft()
 {
-    printf("Move left\n");
-    Fin * hold = visible.takeLast();
-    removeFin(hold);
-    hold->hide();
-    fin_stack.push(hold);
-    hold = fout_stack.pop();
-    //hold->offset = visible.first()->offset-layout->angle;
-    visible.front()->setParent(hold);
-    hold->setParent(p);
-    hold->show();
+    //qDebug()<<"move left";
+    //qobject_cast<Fin *>(list[left]->widget())->angle=0;
+    rend->setAngle(0);
+    float back1 = qobject_cast<Fin *>(list[left]->widget())->offset;
+    float back2 = 0;
 
-    visible.prepend(hold);
-    addFin(hold);
+    for (int i = left-1; i >= right-1; i--)
+    {
+        back2 = qobject_cast<Fin *>(list[i]->widget())->offset;
+        qobject_cast<Fin *>(list[i]->widget())->offset = back1;
+        back1 = back2;
+    }
+
+    list[left]->widget()->hide();
+    left--;
+    right--;
+    list[right]->widget()->show();
 }
 
 void Dial_Layout::moveRight()
 {
-    printf("Move right\nthis");
-    Fin * hold = visible.takeFirst();         // take the fin we wish to remove and hold it
-    if (hold->grab) {
-        visible.first()->grab = 1;
-    }
-    visible.first()->setParent(p);          // set the next fin to be the child of the MainWindow
-    visible.first()->show();                //show it or they will all go away
-    removeFin(hold);                         //remove the held fin
-    hold->hide();                           // hide it
-    fout_stack.push(hold);                  // save it for later
-    hold = fin_stack.pop();                //pop one off of the stack for the other en
-    //hold->setParent(visible.back());     // set it's paraent to be the last fin
-    hold->show();                          // show it
-    //hold->offset = visible.back()->offset+layout->angle; //set its angle
-    visible.append(hold);                  // add it to the list of visible fins
-    addFin(hold);                          //add it to the layout
-    hold->grabMouse();
-}
+    //qDebug()<<"move right";
+    //qobject_cast<Fin *>(list[right]->widget())->angle=0;
+    rend->setAngle(0);
+    float back1 = qobject_cast<Fin *>(list[right]->widget())->offset;
+    float back2 = 0;
 
-/*
- * This is to populate the list of installed programs to make fins for. This will be moved to a new class eventually.
- */
-void Dial_Layout::populateList(QWidget* parent)
-{
-    QString base_uri = "/usr/share/applications/";
-    QDir program_dir(base_uri);
-    QStringList programs = program_dir.entryList(QStringList() << "*.desktop",QDir::Files);
-    int i = 0;
-    QWidget * head = parent;
-    foreach (QString app, programs) {
-        QFile file(base_uri+app);
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        {
-            continue;
-        }
-        QMap<QString, QString> dict;
-        while (!file.atEnd()){
-            QStringList parse = QString(file.readLine()).trimmed().split('=');
-            if (!dict.contains(parse.first())) {
-                dict.insert(parse.first(), parse.last());
-            }
-        }
-        if (dict.contains("NoDisplay")) {
-            if (dict.value("NoDisplay") == "true") {
-                continue;
-            }
-        }
-        if (dict.contains("Terminal")){
-            if (dict.value("Terminal")=="false")
-            {
-                QString ico = dict.value("Icon");
-                QImage *img;
-                QFileInfo path(ico);
-                if (!(path.exists() && path.isFile())) {
-                    img = findIcon(ico);
-                } else {
-                    img = new QImage(ico);
-                }
-                Fin * f = new Fin(head, this, img, dict.value("Exec"));
-                QObject::connect(f, &Fin::setGrab, this, &Dial_Layout::setGrab);
-                QObject::connect(f, &Fin::mouseMoved, this, &Dial_Layout::slide);
-                f->offset = int(angle*i) % 360;
-                fin_stack.prepend(f);
-                f->hide();
-                head = f;
-                i++;
-            }
-        }
-    }
-    while (canAddFin() && !fin_stack.isEmpty())
+    for (int i = right+1; i <= left+1; i++)
     {
-        visible.append(fin_stack.pop());
-        addFin(visible.last());
+        back2 = qobject_cast<Fin *>(list[i]->widget())->offset;
+        qobject_cast<Fin *>(list[i]->widget())->offset = back1;
+        back1 = back2;
     }
-    if (visible.isEmpty()) {
-        throw 1;
-    }
+
+    list[right]->widget()->hide();
+    right++;
+    left++;
+    list[left]->widget()->show();
+
 }
 
-
-QImage *Dial_Layout::findIcon(QString s)
+void Dial_Layout::loadVisible()
 {
-    QString base_dir("/usr/share/icons/hicolor/");
-    QDirIterator icon_it(base_dir, QStringList() << s+"*", QDir::Files, QDirIterator::Subdirectories); //Fix this later
-    while(icon_it.hasNext()) {
-        QString img = icon_it.next();
-        if (img.contains(".svg")) {
-            QImage *ret = new QImage(64,64, QImage::Format_ARGB32);
-            QSvgRenderer renderer(img);
-            QPainter paint(ret);
-            renderer.render(&paint);
-            //std::cout << img.toStdString();
-            return ret;
-        }
+    right = 0;
+    if (list.count() > 0) {
+        Fin * f = qobject_cast<Fin *>(list[0]->widget());
+        f->offset = rend->getStart();
+        f->show();
 
-        return new QImage(img);
+        int num = (num_visible < list.count()) ? num_visible : list.count()-1;
+        for (left = 1; left <= num; left++)
+        {
+            Fin * newf = qobject_cast<Fin *>(list[left]->widget());
+            newf->offset =  f->offset + (rend->getSpan());
+            newf->show();
+            f = newf;
+        }
+        left--;
     }
-    return new QImage("nothin");
 }
 
-
-
+bool Dial_Layout::handleEvent(QInputEvent *e)
+{
+    bool ret = false;
+    for (int i = right; i <= left; i++)
+    {
+        Fin * f = static_cast<Fin *>(list[i]->widget());
+        if(f->handleEvent(e))
+        {
+            ret = true;
+        }
+    }
+    return ret;
+}
 
 
 

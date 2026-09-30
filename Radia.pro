@@ -6,7 +6,7 @@
 
 QT       += core gui
 QT += svg
-
+QT += sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Radia
@@ -26,24 +26,39 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    database.cpp \
+    dial.cpp \
     dial_layout.cpp \
+    filehandler.cpp \
+    finrender.cpp \
     input_handler.cpp \
         main.cpp \
         radia.cpp \
     model.cpp \
+    fin.cpp \
     radia_layout.cpp \
-    fin.cpp
+    test_populator.cpp
 
 HEADERS += \
+    database.h \
+    dial.h \
     dial_layout.h \
+    filehandler.h \
+    finrender.h \
     input_handler.h \
+    ipopulator.h \
+    iradialayout.h \
         radia.h \
     model.h \
+    fin.h \
     radia_layout.h \
-    fin.h
+    test_populator.h
 
 FORMS += \
         radia.ui
+
+#QMAKE_CXXFLAGS += -fsanitize=address -fno-omit-frame-pointer
+#QMAKE_LFLAGS += -fsanitize=address
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

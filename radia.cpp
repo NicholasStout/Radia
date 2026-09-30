@@ -8,9 +8,10 @@ Radia::Radia(QWidget *parent) :
 {
     setAttribute(Qt::WA_TranslucentBackground, true);
     setWindowFlags(Qt::FramelessWindowHint);
+
     //set screen invisble and frameless
 
-    QRect off = QApplication::desktop()->screenGeometry(this);
+    //QRect off = QApplication::primaryScreen()->geometry();
     int h, w;
     h = w = 0;
     for (QScreen * s : QGuiApplication::screens()) {
@@ -18,48 +19,34 @@ Radia::Radia(QWidget *parent) :
         h+=screen.height();
         w+=screen.width();
     }
-    //setMouseTracking(true);
-    l = new Radia_Layout(this);
+    setMouseTracking(false);
+    l = new radia_layout(this);
     //setLayout(l);
-    upper = new Dial_Layout();
-    QSize *size = new QSize(500, 500);
+    QSize size = QSize(w, h);
 
     //Get demensions for the launcher
 
-    QRect *start = new QRect(QPoint(QCursor::pos().rx()-250,QCursor::pos().ry()-250), *size);
+    QRect start = QRect(QPoint(QCursor::pos().rx()-5,QCursor::pos().ry()-250), size);
     printf("%d", QCursor::pos().rx());
-    setGeometry(*start);
+    setGeometry(start);
+    start.setHeight(500);
     setFixedHeight(500);
     setFixedWidth(500);
-    l->setGeometry(*start);
+
+    upper = new Dial(this, &start);
+    lower = new Dial(this, &start);
+    l->setGeometry(start);
     l->setUpperDial(upper);
+    l->setLowerDial(lower);
 }
 
 void Radia::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
     printf("%d,%d\n", event->pos().x(), event->y());
-    upper->setAngle(event->pos());
     repaint();
 }
 
-bool Radia::eventFilter(QObject *object, QEvent *event)
-{
-    //qDebug() << event->type();
-    return false;
-}
-
-//void Radia::paintEvent(QPaintEvent *)
-//{
-//    QPainter painter(this);
-//    painter.setRenderHint(QPainter::Antialiasing);
-//    QColor c(127, 0, 127);
-//    painter.setPen(Qt::NoPen);
-//    painter.setBrush(c);
-//    QPainterPath center;
-//    painter.drawPath(center);
-//    painter.end();
-//}
 
 void Radia::mousePressEvent(QMouseEvent *event)
 {
@@ -80,10 +67,23 @@ void Radia::changeEvent(QEvent * event)
 {
     if (event->type() == QEvent::ActivationChange) {
         if (!this->isActiveWindow()) {
+            //qDebug() << "This fuckin thing is firing";
             QApplication::quit();
         }
     }
 }
+
+bool Radia::eventFilter(QObject *object, QEvent *event)
+{
+    if (auto *e = dynamic_cast<QInputEvent *>(event))
+    {
+        //qDebug() << event->type();
+        return l->handleEvent(e);
+    }
+    return false;
+}
+
+
 
 
 Radia::~Radia()
