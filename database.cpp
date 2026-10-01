@@ -2,7 +2,9 @@
 
 //TODO:Finish
 
-Database::Database() {
+Database::Database(QObject *parent) : QObject(parent)
+{
+    setParent(parent);
     QString name = qgetenv("USER");
     if (name.isEmpty())
         name = qgetenv("USERNAME");
@@ -29,6 +31,16 @@ void Database::addProgram(FinDetails fd)
     query.addBindValue(fd.name);
     query.addBindValue(fd.exec);
     query.addBindValue(fd.ico.name());
+    query.exec();
+}
+
+void Database::addProgram(QString name, QString exec, QString ico)
+{
+    query.prepare("INSERT INTO radia (name, exec, ico) "
+                  "VALUES (?, ?, ?);");
+    query.addBindValue(name);
+    query.addBindValue(exec);
+    query.addBindValue(ico);
     query.exec();
 }
 

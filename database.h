@@ -4,11 +4,12 @@
 #include "ipopulator.h"
 #include <QtSql>
 
-class Database
+class Database : public QObject
 {
 public:
-    Database();
+    Database(QObject *parent = nullptr);
     void addProgram(FinDetails fd);
+    void addProgram(QString name, QString exec, QString ico);
     void removeProgram(FinDetails fd);
     void incrementPopularity(FinDetails fd);
     void pinFin(FinDetails fd);

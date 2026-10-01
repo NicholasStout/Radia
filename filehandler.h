@@ -5,14 +5,18 @@
 #include <QMap>
 #include "ipopulator.h"
 
-class FileHandler : public IPopulator
+class FileHandler : public QObject, public IPopulator
 {
+    Q_OBJECT
 public:
-    FileHandler();
+    FileHandler(QObject *parent = nullptr);
     const QList<FinDetails> populateList() override;
     QIcon findIcon(QString ico) const override;
+    const QList<FinDetails> getDesktopFiles();
 private:
     QList<QMap<QString, QString>> cache;
+private slots:
+    void assessChange(const QString &path);
 };
 
 #endif // FILEHANDLER_H

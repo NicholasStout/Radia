@@ -1,7 +1,7 @@
 #ifndef IPOPULATOR_H
 #define IPOPULATOR_H
 
-#include <QObject>
+//#include <QObject>
 #include <QImage>
 #include <QIcon>
 

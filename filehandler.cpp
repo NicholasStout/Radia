@@ -3,13 +3,24 @@
 #include <QDirIterator>
 #include <QIcon>
 #include <QFileInfo>
+#include <QFileSystemWatcher>
 #include "ipopulator.h"
 
-FileHandler::FileHandler() : IPopulator{} {}
+QString base_uri = "/usr/share/applications/";
+FileHandler::FileHandler(QObject *parent) : QObject(parent){
+    QFileSystemWatcher *watcher = new QFileSystemWatcher(this);
+    watcher->addPath(base_uri);
+    connect(watcher, &QFileSystemWatcher::directoryChanged,
+                     this, &FileHandler::assessChange);
+}
 
 const QList<FinDetails> FileHandler::populateList()
 {
-    QString base_uri = "/usr/share/applications/";
+    return getDesktopFiles();
+}
+
+const QList<FinDetails> FileHandler::getDesktopFiles()
+{
     QDirIterator programs(base_uri, QStringList() << "*.desktop",QDir::Files, QDirIterator::Subdirectories);
     QList<FinDetails> ret;
     while (programs.hasNext()) {
@@ -42,6 +53,11 @@ const QList<FinDetails> FileHandler::populateList()
         cache.append(dict);
     }
     return ret;
+}
+
+void FileHandler::assessChange(const QString &path)
+{
+
 }
 
 QIcon FileHandler::findIcon(QString ico) const
