@@ -52,7 +52,7 @@ public:
 
     void showUp();
 signals:
-    void setGrab(bool g);
+    void finSelected(FinDetails det);
     void mouseMoved(QMouseEvent* e);
 
 public slots:

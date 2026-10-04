@@ -33,6 +33,10 @@ Radia::Radia(QWidget *parent) :
     setFixedHeight(500);
     setFixedWidth(500);
 
+    db = new Database(this);
+    fh = new FileHandler(db, this);
+    con = new Controller(fh, this);
+
     upper = new Dial(this, &start);
     lower = new Dial(this, &start);
     l->setGeometry(start);

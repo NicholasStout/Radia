@@ -7,19 +7,20 @@
 #include "ipopulator.h"
 
 QString base_uri = "/usr/share/applications/";
-FileHandler::FileHandler(QObject *parent) : QObject(parent){
+FileHandler::FileHandler(Database *data, QObject *parent) : QObject(parent){
+    db = data;
     QFileSystemWatcher *watcher = new QFileSystemWatcher(this);
     watcher->addPath(base_uri);
     connect(watcher, &QFileSystemWatcher::directoryChanged,
                      this, &FileHandler::assessChange);
 }
 
-const QList<FinDetails> FileHandler::populateList()
+QList<FinDetails> FileHandler::populateList()
 {
     return getDesktopFiles();
 }
 
-const QList<FinDetails> FileHandler::getDesktopFiles()
+QList<FinDetails> FileHandler::getDesktopFiles()
 {
     QDirIterator programs(base_uri, QStringList() << "*.desktop",QDir::Files, QDirIterator::Subdirectories);
     QList<FinDetails> ret;
@@ -56,6 +57,16 @@ const QList<FinDetails> FileHandler::getDesktopFiles()
 }
 
 void FileHandler::assessChange(const QString &path)
+{
+
+}
+
+void FileHandler::increasePopularity(const FinDetails fd)
+{
+
+}
+
+void FileHandler::pinFin(const FinDetails fd)
 {
 
 }

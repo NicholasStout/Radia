@@ -9,7 +9,7 @@ class Database : public QObject
 public:
     Database(QObject *parent = nullptr);
     void addProgram(FinDetails fd);
-    void addProgram(QString name, QString exec, QString ico);
+    void addProgram(QString path, QString name, QString exec, QDateTime lastModified, QString ico);
     void removeProgram(FinDetails fd);
     void incrementPopularity(FinDetails fd);
     void pinFin(FinDetails fd);

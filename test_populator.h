@@ -8,7 +8,7 @@ class test_populator : public IPopulator
 public:
     int num;
     test_populator(int testNum);
-    const QList<FinDetails> populateList() override;
+    QList<FinDetails> populateList() override;
     QIcon findIcon(QString ico) const override;
 };
 

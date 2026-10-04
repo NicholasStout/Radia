@@ -18,28 +18,27 @@ Database::Database(QObject *parent) : QObject(parent)
     query.exec("CREATE TABLE IF NOT EXISTS radia ("
                "popularity INTEGER default 0,"
                "pinned INTEGER default 0,"
+               "path TEXT NOT NULL UNIQUE,"
                "name TEXT NOT NULL,"
                "exec TEXT NOT NULL UNIQUE,"
+               "lastModified INTEGER default 0,"
                "ico TEXT"
                ");");
 }
 
 void Database::addProgram(FinDetails fd)
 {
-    query.prepare("INSERT INTO radia (name, exec, ico) "
-                  "VALUES (?, ?, ?);");
-    query.addBindValue(fd.name);
-    query.addBindValue(fd.exec);
-    query.addBindValue(fd.ico.name());
-    query.exec();
+    addProgram(fd.path, fd.name, fd.exec, fd.lastModified, fd.ico.name());
 }
 
-void Database::addProgram(QString name, QString exec, QString ico)
+void Database::addProgram(QString path, QString name, QString exec, QDateTime lastModified, QString ico)
 {
-    query.prepare("INSERT INTO radia (name, exec, ico) "
-                  "VALUES (?, ?, ?);");
+    query.prepare("INSERT INTO radia (path, name, exec, lastModified, ico) "
+                  "VALUES (?, ?, ?, ?, ?);");
+    query.addBindValue(path);
     query.addBindValue(name);
     query.addBindValue(exec);
+    query.addBindValue(lastModified.toMSecsSinceEpoch());
     query.addBindValue(ico);
     query.exec();
 }
@@ -70,13 +69,13 @@ void Database::pinFin(FinDetails fd)
 
 QList<FinDetails> Database::getByPopScore()
 {
-    query.exec("SELECT name, exec, ico FROM radia WHERE pinned = 0 ORDER BY popularity DESC;");
+    query.exec("SELECT path, name, exec, lastModified, ico FROM radia WHERE pinned = 0 ORDER BY popularity DESC;");
     return generateList();
 }
 
 QList<FinDetails> Database::getPinned()
 {
-    query.exec("SELECT name, exec, ico FROM radia WHERE pinned > 0 ORDER BY pinned ASC;");
+    query.exec("SELECT path, name, exec, lastModified, ico FROM radia WHERE pinned > 0 ORDER BY pinned ASC;");
     return generateList();
 }
 
@@ -86,9 +85,12 @@ QList<FinDetails> Database::generateList()
     while (query.next())
     {
         FinDetails fd;
-        fd.name = query.value(0).toString();
-        fd.exec = query.value(1).toString();
-        fd.ico = QIcon(query.value(2).toString());
+        QDateTime dt;
+        fd.path = query.value(0).toString();
+        fd.name = query.value(1).toString();
+        fd.exec = query.value(2).toString();
+        fd.lastModified = dt.addMSecs(query.value(3).toInt());
+        fd.ico = QIcon(query.value(4).toString());
         list.append(fd);
     }
     return list;
