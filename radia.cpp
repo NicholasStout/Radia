@@ -1,4 +1,6 @@
 #include "radia.h"
+#include "pinnedpopulator.h"
+#include "popularitypopulator.h"
 
 /*
  * This class sets up the layouts and handles overarching commands and events
@@ -32,16 +34,20 @@ Radia::Radia(QWidget *parent) :
     start.setHeight(500);
     setFixedHeight(500);
     setFixedWidth(500);
+    l->setGeometry(start);
 
     db = new Database(this);
     fh = new FileHandler(db, this);
-    con = new Controller(fh, this);
+    con = new Controller(db, this);
 
-    upper = new Dial(this, &start);
-    lower = new Dial(this, &start);
-    l->setGeometry(start);
+    PopularityPopulator* pop = new PopularityPopulator(db, this);
+    upper = new Dial(pop, this, &start);
     l->setUpperDial(upper);
+    upper->createFins(*con);
+    PinnedPopulator * pin = new PinnedPopulator(db, this);
+    lower = new Dial(pin, this, &start);
     l->setLowerDial(lower);
+    lower->createFins(*con);
 }
 
 void Radia::mouseMoveEvent(QMouseEvent *event)

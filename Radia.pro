@@ -34,6 +34,7 @@ SOURCES += \
     finrender.cpp \
     input_handler.cpp \
         main.cpp \
+    pinnedpopulator.cpp \
     popularitypopulator.cpp \
         radia.cpp \
     model.cpp \
@@ -51,6 +52,7 @@ HEADERS += \
     input_handler.h \
     ipopulator.h \
     iradialayout.h \
+    pinnedpopulator.h \
     popularitypopulator.h \
         radia.h \
     model.h \

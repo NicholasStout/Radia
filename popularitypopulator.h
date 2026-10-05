@@ -3,13 +3,13 @@
 
 #include <QObject>
 #include "ipopulator.h"
-#include "filehandler.h"
+#include "database.h"
 
-class PopularityPopulator : public IPopulator, QObject
+class PopularityPopulator : public QObject, public IPopulator
 {
     Q_OBJECT
 public:
-    explicit PopularityPopulator(FileHandler *f, QObject *parent = nullptr);
+    explicit PopularityPopulator(Database *d, QObject *parent = nullptr);
     QList<FinDetails> populateList() override;
     QIcon findIcon(QString ico) const override;
     ~PopularityPopulator(){}
@@ -18,7 +18,7 @@ public:
 signals:
 
 private:
-    FileHandler *fh;
+    Database *db;
 };
 
 #endif // POPULARITYPOPULATOR_H

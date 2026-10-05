@@ -19,8 +19,8 @@ private:
     Database *db;
 private slots:
     void assessChange(const QString &path);
-    void increasePopularity(const FinDetails fd);
-    void pinFin(const FinDetails fd);
+    //void increasePopularity(FinDetails fd) const;
+    //void pinFin(FinDetails fd) const;
 };
 
 #endif // FILEHANDLER_H

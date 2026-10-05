@@ -15,6 +15,16 @@ Database::Database(QObject *parent) : QObject(parent)
     //db.setUserName(name);
     //db.setPassword("BingusTingus");
     bool ok = db.open();
+    if (!ok) {
+        qDebug() << "Database error:" << db.lastError().text();
+        return;
+    }
+    else
+    {
+        qDebug() << "Database ok";
+    }
+
+    query = QSqlQuery(db);
     query.exec("CREATE TABLE IF NOT EXISTS radia ("
                "popularity INTEGER default 0,"
                "pinned INTEGER default 0,"
@@ -70,6 +80,12 @@ void Database::pinFin(FinDetails fd)
 QList<FinDetails> Database::getByPopScore()
 {
     query.exec("SELECT path, name, exec, lastModified, ico FROM radia WHERE pinned = 0 ORDER BY popularity DESC;");
+    return generateList();
+}
+
+QList<FinDetails> Database::getAll()
+{
+    query.exec("SELECT path, name, exec, lastModified, ico FROM radia;");
     return generateList();
 }
 

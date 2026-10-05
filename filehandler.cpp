@@ -13,6 +13,7 @@ FileHandler::FileHandler(Database *data, QObject *parent) : QObject(parent){
     watcher->addPath(base_uri);
     connect(watcher, &QFileSystemWatcher::directoryChanged,
                      this, &FileHandler::assessChange);
+    assessChange(base_uri);
 }
 
 QList<FinDetails> FileHandler::populateList()
@@ -58,18 +59,35 @@ QList<FinDetails> FileHandler::getDesktopFiles()
 
 void FileHandler::assessChange(const QString &path)
 {
+    QList<FinDetails> l = db->getAll();
+    QList<FinDetails> newL = getDesktopFiles();
 
+    for(auto it : newL)
+    {
+        if(!l.contains(it))
+        {
+            db->addProgram(it);
+        }
+    }
+
+    for(auto it : l)
+    {
+        if(!newL.contains(it))
+        {
+            db->removeProgram(it);
+        }
+    }
 }
 
-void FileHandler::increasePopularity(const FinDetails fd)
-{
+// void FileHandler::increasePopularity(const FinDetails fd)
+// {
 
-}
+// }
 
-void FileHandler::pinFin(const FinDetails fd)
-{
+// void FileHandler::pinFin(const FinDetails fd)
+// {
 
-}
+// }
 
 QIcon FileHandler::findIcon(QString ico) const
 {

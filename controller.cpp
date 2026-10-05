@@ -1,14 +1,9 @@
 #include "controller.h"
 
-Controller::Controller(FileHandler *f, QObject *parent)
+Controller::Controller(Database *d, QObject *parent)
     : QObject{parent}
 {
-    fh = f;
-}
-
-void Controller::updateFinList()
-{
-
+    db = d;
 }
 
 void Controller::launchProgram(FinDetails fd) const

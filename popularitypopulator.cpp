@@ -1,17 +1,25 @@
 #include "popularitypopulator.h"
 
-PopularityPopulator::PopularityPopulator(FileHandler *f, QObject *parent)
+PopularityPopulator::PopularityPopulator(Database *d, QObject *parent)
     : QObject{parent}
 {
-    fh = f;
+    db = d;
 }
 
 QList<FinDetails> PopularityPopulator::populateList()
 {
-    return QList<FinDetails>();
+    return db->getByPopScore();
 }
 
 QIcon PopularityPopulator::findIcon(QString ico) const
 {
-    return QIcon();
+    QIcon img;
+    QFileInfo path(ico);
+
+    if (path.isAbsolute()) {
+        img = QIcon(ico);
+    } else {
+        img = QIcon::fromTheme(ico);
+    }
+    return img;
 }

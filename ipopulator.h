@@ -13,6 +13,11 @@ struct FinDetails
     QString exec;
     QDateTime lastModified;
     QIcon ico;
+
+    bool operator==(const FinDetails f) const
+    {
+        return path == f.path;
+    }
 };
 
 class IPopulator

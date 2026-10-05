@@ -3,13 +3,13 @@
 
 #include <QObject>
 #include "ipopulator.h"
-#include "filehandler.h"
+#include "database.h"
 
 class Controller : public QObject
 {
     Q_OBJECT
 public:
-    explicit Controller(FileHandler *f, QObject *parent = nullptr);
+    explicit Controller(Database *d, QObject *parent = nullptr);
 
 signals:
     void updateFinList();
@@ -19,7 +19,7 @@ public slots:
     void togglePin(FinDetails fd) const;
 
 private:
-    FileHandler * fh;
+    Database * db;
 };
 
 #endif // CONTROLLER_H

@@ -14,6 +14,7 @@ public:
     void incrementPopularity(FinDetails fd);
     void pinFin(FinDetails fd);
     QList<FinDetails> getByPopScore();
+    QList<FinDetails> getAll();
     QList<FinDetails> getPinned();
 
 private:
