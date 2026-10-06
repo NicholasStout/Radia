@@ -43,6 +43,7 @@ void Fin::paintEvent(QPaintEvent *)
     circle = QPainterPath();
     circle.arcTo(target, 0, 360);
     painter.setClipPath(circle);
+    //qDebug() << det.ico;
     det.ico.paint(&painter, target.toRect());
     QString ang_string;
     ang_string.setNum(loc_angle);
@@ -145,7 +146,8 @@ bool Fin::mouseRelease(QMouseEvent *event)
     {
         if (calcAngle(event->pos(), res) == grab_angle && center.contains(event->pos()))
         {
-                startProgram();
+                //startProgram();
+                emit finSelected(det);
                 event->accept();
                 return true;
         } else {

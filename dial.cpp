@@ -12,7 +12,7 @@ Dial::Dial(IPopulator * pop, QWidget *parent, QRect *size)
 {
     grab = false;
     setGeometry(*size);
-    populator = pop; //This is leaking TODO: Move this to radia
+    populator = pop;
     //populator = new test_populator(8);
     l = new Dial_Layout(this, &fr);
     l->setGeometry(*size);
@@ -65,7 +65,7 @@ void Dial::createFins(Controller &c)
         FinDetails deetz = it.next();
         Fin * f = new Fin(head, deetz, &fr);
         f->installEventFilter(parent());
-        //QObject::connect(f, &Fin::setGrab, this, &Dial::setGrab);
+        QObject::connect(f, &Fin::finSelected, &c, &Controller::launchProgram);
         //QObject::connect(f, &Fin::mouseMoved, this, &Dial::slide);
         f->hide();
         l->addFin(f);

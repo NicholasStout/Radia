@@ -106,7 +106,12 @@ QList<FinDetails> Database::generateList()
         fd.name = query.value(1).toString();
         fd.exec = query.value(2).toString();
         fd.lastModified = dt.addMSecs(query.value(3).toInt());
-        fd.ico = QIcon(query.value(4).toString());
+        QFileInfo path(query.value(4).toString());
+        if (path.isAbsolute()) {
+            fd.ico = QIcon(query.value(4).toString());
+        } else {
+            fd.ico = QIcon::fromTheme(query.value(4).toString());
+        }
         list.append(fd);
     }
     return list;

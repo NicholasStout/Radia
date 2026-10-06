@@ -51,7 +51,6 @@ HEADERS += \
     finrender.h \
     input_handler.h \
     ipopulator.h \
-    iradialayout.h \
     pinnedpopulator.h \
     popularitypopulator.h \
         radia.h \

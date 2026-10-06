@@ -4,6 +4,7 @@
 #include <QIcon>
 #include <QFileInfo>
 #include <QFileSystemWatcher>
+#include <QDebug>
 #include "ipopulator.h"
 
 QString base_uri = "/usr/share/applications/";
@@ -43,13 +44,17 @@ QList<FinDetails> FileHandler::getDesktopFiles()
         if (dict.value("Terminal")=="true") {continue;}
         if (dict.value("Type") != "Application") {continue;}
 
+        QFileInfo fi(file);
         QString ico = dict.value("Icon");
-        QIcon img = findIcon(ico);
+        //QIcon img = findIcon(ico);
 
         FinDetails fd;
+        fd.path = app;
         fd.exec=dict.value("Exec");
-        fd.ico=img;
+        fd.ico=findIcon(ico);
+        fd.lastModified=fi.lastModified();
         fd.name=dict.value("Name");
+
 
         ret.append(fd);
         cache.append(dict);
@@ -77,6 +82,7 @@ void FileHandler::assessChange(const QString &path)
             db->removeProgram(it);
         }
     }
+    qDebug() << newL.size();
 }
 
 // void FileHandler::increasePopularity(const FinDetails fd)

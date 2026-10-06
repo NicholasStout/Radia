@@ -42,12 +42,13 @@ Radia::Radia(QWidget *parent) :
 
     PopularityPopulator* pop = new PopularityPopulator(db, this);
     upper = new Dial(pop, this, &start);
-    l->setUpperDial(upper);
     upper->createFins(*con);
+    l->setUpperDial(upper);
+
     PinnedPopulator * pin = new PinnedPopulator(db, this);
     lower = new Dial(pin, this, &start);
-    l->setLowerDial(lower);
     lower->createFins(*con);
+    l->setLowerDial(lower);
 }
 
 void Radia::mouseMoveEvent(QMouseEvent *event)
