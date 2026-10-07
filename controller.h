@@ -17,7 +17,7 @@ signals:
 
 public slots:
     void launchProgram(FinDetails fd) const;
-    void togglePin(FinDetails fd) const;
+    void togglePin(FinDetails fd);
 
 private:
     Database * db;

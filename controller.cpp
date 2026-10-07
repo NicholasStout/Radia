@@ -19,7 +19,7 @@ void Controller::launchProgram(FinDetails fd) const
     QApplication::quit();
 }
 
-void Controller::togglePin(FinDetails fd) const
+void Controller::togglePin(FinDetails fd)
 {
     if(db->getPinned().contains(fd))
     {
