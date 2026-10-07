@@ -181,6 +181,7 @@ void Dial_Layout::moveRight()
 void Dial_Layout::loadVisible()
 {
     right = 0;
+    left=-1;
     if (list.count() > 0) {
         Fin * f = qobject_cast<Fin *>(list[0]->widget());
         f->offset = rend->getStart();
@@ -194,7 +195,7 @@ void Dial_Layout::loadVisible()
             newf->show();
             f = newf;
         }
-        left--;
+        left=num;
     }
 }
 

@@ -2,7 +2,7 @@
 
 test_populator::test_populator(int testNum) {num = testNum;}
 
-const QList<FinDetails> test_populator::populateList()
+QList<FinDetails> test_populator::populateList()
 {
     QList<FinDetails> ret;
     for(int i = 1; i <= num; i++)

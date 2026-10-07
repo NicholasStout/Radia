@@ -7,6 +7,9 @@
 #include <QtWidgets>
 #include "dial.h"
 #include "radia_layout.h"
+#include "database.h"
+#include "controller.h"
+#include "filehandler.h"
 
 
 
@@ -38,6 +41,10 @@ public:
     ~Radia();
 private:
     Ui::Radia *ui;
+    Controller *con;
+    Database *db;
+    FileHandler *fh;
+
 };
 
 #endif // RADIA_H

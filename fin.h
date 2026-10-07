@@ -44,7 +44,7 @@ public:
     bool mousePress(QMouseEvent *event);
     bool mouseRelease(QMouseEvent *event);
     void make_path();
-    void mouseMoveEvent(QMouseEvent *event) override;
+    //void mouseMoveEvent(QMouseEvent *event) override;
     QSize sizeHint() const override;
     QRectF center_img(QIcon img);
     double get_loc_angle(){return rend->getAngle()+offset;}
@@ -52,12 +52,14 @@ public:
 
     void showUp();
 signals:
-    void setGrab(bool g);
-    void mouseMoved(QMouseEvent* e);
+    void finSelected(FinDetails det);
+    void TogglePin(FinDetails det);
+    //void mouseMoved(QMouseEvent* e);
 
 public slots:
 private:
     void startProgram();
+    bool rightClicked = false;
 };
 
 

@@ -26,6 +26,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    controller.cpp \
     database.cpp \
     dial.cpp \
     dial_layout.cpp \
@@ -33,6 +34,8 @@ SOURCES += \
     finrender.cpp \
     input_handler.cpp \
         main.cpp \
+    pinnedpopulator.cpp \
+    popularitypopulator.cpp \
         radia.cpp \
     model.cpp \
     fin.cpp \
@@ -40,6 +43,7 @@ SOURCES += \
     test_populator.cpp
 
 HEADERS += \
+    controller.h \
     database.h \
     dial.h \
     dial_layout.h \
@@ -47,7 +51,8 @@ HEADERS += \
     finrender.h \
     input_handler.h \
     ipopulator.h \
-    iradialayout.h \
+    pinnedpopulator.h \
+    popularitypopulator.h \
         radia.h \
     model.h \
     fin.h \

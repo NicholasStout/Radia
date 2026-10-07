@@ -7,17 +7,17 @@ void Dial::setBoundaryAngles(float start, float stop)
     l->setSpan(start, stop);
 }
 
-Dial::Dial(QWidget *parent, QRect *size)
+Dial::Dial(IPopulator * pop, QWidget *parent, QRect *size)
     : QWidget{parent}
 {
     grab = false;
     setGeometry(*size);
-    populator = new FileHandler(); //This is leaking TODO: Move this to radia
+    populator = pop;
     //populator = new test_populator(8);
     l = new Dial_Layout(this, &fr);
     l->setGeometry(*size);
     setLayout(l);
-    createFins();
+    //createFins();
 }
 
 void Dial::setPopulator(IPopulator *newPopulator)
@@ -56,7 +56,7 @@ bool Dial::handleEvent(QInputEvent *e)
     return ret;
 }
 
-void Dial::createFins()
+void Dial::createFins(Controller &c)
 {
     QWidget * head = this;
     QList<FinDetails> finList = populator->populateList();
@@ -65,8 +65,8 @@ void Dial::createFins()
         FinDetails deetz = it.next();
         Fin * f = new Fin(head, deetz, &fr);
         f->installEventFilter(parent());
-        //QObject::connect(f, &Fin::setGrab, this, &Dial::setGrab);
-        //QObject::connect(f, &Fin::mouseMoved, this, &Dial::slide);
+        QObject::connect(f, &Fin::finSelected, &c, &Controller::launchProgram);
+        QObject::connect(f, &Fin::TogglePin, &c, &Controller::togglePin);
         f->hide();
         l->addFin(f);
     }

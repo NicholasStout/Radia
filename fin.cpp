@@ -43,10 +43,11 @@ void Fin::paintEvent(QPaintEvent *)
     circle = QPainterPath();
     circle.arcTo(target, 0, 360);
     painter.setClipPath(circle);
+    //qDebug() << det.ico;
     det.ico.paint(&painter, target.toRect());
-    QString ang_string;
-    ang_string.setNum(loc_angle);
-    painter.drawText(target, Qt::AlignCenter, ang_string);
+    //QString ang_string;
+    //ang_string.setNum(loc_angle);
+    //painter.drawText(target, Qt::AlignCenter, ang_string);
     painter.end();
 }
 
@@ -120,8 +121,27 @@ bool Fin::mousePress(QMouseEvent *event)
 
         if (center.contains(p))
         {
+            qDebug() << "LeftClicked";
             std::cout << "Mouse grabbed by "+ com.toStdString()+'\n';
             grab_angle = calcAngle(event->pos(), res);
+            event->accept();
+            setFocus(Qt::MouseFocusReason);
+            return true;
+        }
+        else
+        {
+            event->ignore();
+            return false;
+        }
+    }
+    else if (event->button() == Qt::RightButton)
+    {
+        QPointF p(event->pos().x(), event->pos().y());
+
+        if (center.contains(p))
+        {
+            qDebug() << "RightClicked";
+            rightClicked = true;
             event->accept();
             setFocus(Qt::MouseFocusReason);
             return true;
@@ -145,24 +165,43 @@ bool Fin::mouseRelease(QMouseEvent *event)
     {
         if (calcAngle(event->pos(), res) == grab_angle && center.contains(event->pos()))
         {
-                startProgram();
+            qDebug() << "LeftClicked";
+                //startProgram();
+                emit finSelected(det);
                 event->accept();
                 return true;
         } else {
             return true;
             event->ignore();
         }
-    } else {
+
+    }
+    else if (event->button() == Qt::RightButton)
+    {
+        if (rightClicked)
+        {
+            qDebug() << "RightClicked";
+            rightClicked = false;
+            //startProgram();
+            emit TogglePin(det);
+            event->accept();
+            return true;
+        } else {
+            return true;
+            event->ignore();
+        }
+    }
+    else {
         return true;
         event->ignore();
     }
 }
 
-void Fin::mouseMoveEvent(QMouseEvent *event)
-{
-    emit mouseMoved(event);
-    event->accept();
-}
+//void Fin::mouseMoveEvent(QMouseEvent *event)
+//{
+//    emit mouseMoved(event);
+//    event->accept();
+//}
 
 void Fin::showUp()
 {

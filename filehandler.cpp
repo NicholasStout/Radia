@@ -4,22 +4,25 @@
 #include <QIcon>
 #include <QFileInfo>
 #include <QFileSystemWatcher>
+#include <QDebug>
 #include "ipopulator.h"
 
 QString base_uri = "/usr/share/applications/";
-FileHandler::FileHandler(QObject *parent) : QObject(parent){
+FileHandler::FileHandler(Database *data, QObject *parent) : QObject(parent){
+    db = data;
     QFileSystemWatcher *watcher = new QFileSystemWatcher(this);
     watcher->addPath(base_uri);
     connect(watcher, &QFileSystemWatcher::directoryChanged,
                      this, &FileHandler::assessChange);
+    assessChange(base_uri);
 }
 
-const QList<FinDetails> FileHandler::populateList()
+QList<FinDetails> FileHandler::populateList()
 {
     return getDesktopFiles();
 }
 
-const QList<FinDetails> FileHandler::getDesktopFiles()
+QList<FinDetails> FileHandler::getDesktopFiles()
 {
     QDirIterator programs(base_uri, QStringList() << "*.desktop",QDir::Files, QDirIterator::Subdirectories);
     QList<FinDetails> ret;
@@ -41,13 +44,17 @@ const QList<FinDetails> FileHandler::getDesktopFiles()
         if (dict.value("Terminal")=="true") {continue;}
         if (dict.value("Type") != "Application") {continue;}
 
+        QFileInfo fi(file);
         QString ico = dict.value("Icon");
-        QIcon img = findIcon(ico);
+        //QIcon img = findIcon(ico);
 
         FinDetails fd;
+        fd.path = app;
         fd.exec=dict.value("Exec");
-        fd.ico=img;
+        fd.ico=findIcon(ico);
+        fd.lastModified=fi.lastModified();
         fd.name=dict.value("Name");
+
 
         ret.append(fd);
         cache.append(dict);
@@ -57,8 +64,36 @@ const QList<FinDetails> FileHandler::getDesktopFiles()
 
 void FileHandler::assessChange(const QString &path)
 {
+    QList<FinDetails> l = db->getAll();
+    QList<FinDetails> newL = getDesktopFiles();
 
+    for(auto it : newL)
+    {
+        if(!l.contains(it))
+        {
+            db->addProgram(it);
+        }
+    }
+
+    for(auto it : l)
+    {
+        if(!newL.contains(it))
+        {
+            db->removeProgram(it);
+        }
+    }
+    qDebug() << newL.size();
 }
+
+// void FileHandler::increasePopularity(const FinDetails fd)
+// {
+
+// }
+
+// void FileHandler::pinFin(const FinDetails fd)
+// {
+
+// }
 
 QIcon FileHandler::findIcon(QString ico) const
 {
