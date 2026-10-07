@@ -55,25 +55,33 @@ void Database::addProgram(QString path, QString name, QString exec, QDateTime la
 
 void Database::removeProgram(FinDetails fd)
 {
-    query.prepare("DELETE FROM radia WHERE exec = ?;");
+    query.prepare("DELETE FROM radia WHERE path = ?;");
     //query.addBindValue(fd.name);
-    query.addBindValue(fd.exec);
+    query.addBindValue(fd.path);
     //query.addBindValue(fd.ico.name());
     query.exec();
 }
 
 void Database::incrementPopularity(FinDetails fd)
 {
-    query.prepare("UPDATE radia SET popularity = popularity + 1 WHERE exec = ?;");
-    query.addBindValue(fd.exec);
+    query.prepare("UPDATE radia SET popularity = popularity + 1 WHERE path = ?;");
+    query.addBindValue(fd.path);
     query.exec();
 }
 
 void Database::pinFin(FinDetails fd)
 {
     query.prepare("UPDATE radia SET pinned = (SELECT COALESCE(MAX(pinned), 0) + 1 "
-                  "FROM radia) WHERE exec = ?;");
-    query.addBindValue(fd.exec);
+                  "FROM radia) WHERE path = ?;");
+    query.addBindValue(fd.path);
+    query.exec();
+}
+
+void Database::unpinFin(FinDetails fd)
+{
+    query.prepare("UPDATE radia SET pinned = 0"
+                  "WHERE path = ?;");
+    query.addBindValue(fd.path);
     query.exec();
 }
 

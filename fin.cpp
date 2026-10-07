@@ -160,11 +160,11 @@ bool Fin::mouseRelease(QMouseEvent *event)
     }
 }
 
-void Fin::mouseMoveEvent(QMouseEvent *event)
-{
-    emit mouseMoved(event);
-    event->accept();
-}
+//void Fin::mouseMoveEvent(QMouseEvent *event)
+//{
+//    emit mouseMoved(event);
+//    event->accept();
+//}
 
 void Fin::showUp()
 {

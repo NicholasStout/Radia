@@ -66,7 +66,7 @@ void Dial::createFins(Controller &c)
         Fin * f = new Fin(head, deetz, &fr);
         f->installEventFilter(parent());
         QObject::connect(f, &Fin::finSelected, &c, &Controller::launchProgram);
-        //QObject::connect(f, &Fin::mouseMoved, this, &Dial::slide);
+        QObject::connect(f, &Fin::TogglePin, &c, &Controller::togglePin);
         f->hide();
         l->addFin(f);
     }

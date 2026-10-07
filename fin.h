@@ -53,7 +53,8 @@ public:
     void showUp();
 signals:
     void finSelected(FinDetails det);
-    void mouseMoved(QMouseEvent* e);
+    void TogglePin(FinDetails det);
+    //void mouseMoved(QMouseEvent* e);
 
 public slots:
 private:

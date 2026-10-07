@@ -13,6 +13,7 @@ public:
     void removeProgram(FinDetails fd);
     void incrementPopularity(FinDetails fd);
     void pinFin(FinDetails fd);
+    void unpinFin(FinDetails fd);
     QList<FinDetails> getByPopScore();
     QList<FinDetails> getAll();
     QList<FinDetails> getPinned();

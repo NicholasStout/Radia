@@ -21,5 +21,13 @@ void Controller::launchProgram(FinDetails fd) const
 
 void Controller::togglePin(FinDetails fd) const
 {
-
+    if(db->getPinned().contains(fd))
+    {
+        db->unpinFin(fd);
+    }
+    else
+    {
+        db->pinFin(fd);
+    }
+    emit updatePinned();
 }

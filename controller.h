@@ -13,6 +13,7 @@ public:
 
 signals:
     void updateFinList();
+    void updatePinned();
 
 public slots:
     void launchProgram(FinDetails fd) const;
