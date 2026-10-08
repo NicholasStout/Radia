@@ -13,9 +13,13 @@ Radia is built using `QT 6.12`. I would suggest using [QT creator.](https://www.
 Then run
 
 `mkdir build`
+
 `cd build`
+
 `qmake ../Radia.pro`
+
 `make -j$(nproc)`
+
 `./Radia`
 
 ## Theory
