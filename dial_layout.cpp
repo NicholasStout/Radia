@@ -15,6 +15,7 @@ Dial_Layout::Dial_Layout(QWidget* parent, FinRender* fr) :
     rend->setSpan(20);
     //setGeometry(parent->geometry());
     num_visible = (rend->getStop()-rend->getStart())/(rend->getAngle()+5);
+    conGrad = new QConicalGradient(sizeHint().height()/2, sizeHint().width()/2, 0);
 }
 
 void Dial_Layout::addItem(QLayoutItem* item)
@@ -24,6 +25,11 @@ void Dial_Layout::addItem(QLayoutItem* item)
 
 void Dial_Layout::addFin(Fin *f)
 {
+    QGraphicsOpacityEffect *eff = new QGraphicsOpacityEffect;
+    setupEffect();
+    eff->setOpacity(1);
+    eff->setOpacityMask(QBrush(*conGrad));
+    f->setGraphicsEffect(eff);
     addWidget(f);
 }
 
@@ -54,6 +60,7 @@ void Dial_Layout::setGeometry(const QRect &r)
             f->setGeometry(r);
             //f->span = angle-5;
         }
+        conGrad = new QConicalGradient(r.height()/2, r.width()/2, 0);
     }
 }
 
@@ -63,13 +70,34 @@ void Dial_Layout::setGeometry(const QRect &r, float ang)
     setGeometry(r);
 }
 
+void Dial_Layout::setupEffect()
+{
+    auto normalizeAngle = [](double degrees) -> double {
+        return (degrees - 360.0 * std::floor(degrees / 360.0)) / 360.0;
+    };
+
+    //QConicalGradient conGrad;
+    conGrad->setStops({});
+    conGrad->setColorAt(normalizeAngle(rend->getStart()-5), Qt::transparent);
+    conGrad->setColorAt(normalizeAngle(rend->getStart()+rend->getSpan()/4), Qt::black);
+    //conGrad->setColorAt(normalizeAngle(rend->getStart()+5), Qt::transparent);
+    //conGrad->setColorAt(normalizeAngle(rend->getStop()-5), Qt::transparent);
+    conGrad->setColorAt(normalizeAngle(rend->getStop()-rend->getSpan()/4), Qt::black);
+    conGrad->setColorAt(normalizeAngle(rend->getStop()+5), Qt::transparent);
+    //conGrad->setColorAt(1, Qt::black);
+    //conGrad->setColorAt(0.5, Qt::transparent);
+    //conGrad->setColorAt(0, Qt::black);
+
+}
+
 void Dial_Layout::setSpan(float start, float stop)
 {
     rend->setStart(start);
     rend->setStop(stop);
-    qDebug() << rend->getStop();
+    //setupEffect();
+    //qDebug() << rend->getStop();
     num_visible = std::abs(start-stop)/(rend->getSpan()+5);
-    loadVisible();
+    //loadVisible();
 }
 
 QSize Dial_Layout::sizeHint() const

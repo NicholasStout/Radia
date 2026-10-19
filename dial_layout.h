@@ -40,6 +40,7 @@ public:
     bool handleEvent(QInputEvent *e);
     void setGrabAngle(float newGrabAngle);
 
+    void setupEffect();
 public slots:
     void redraw();
 
@@ -51,6 +52,8 @@ private:
     int left, right, num_visible;
     void release();
     FinRender *rend;
+    QConicalGradient *conGrad;
+    //QGraphicsOpacityEffect *eff;
 };
 
 #endif // DIAL_LAYOUT_H

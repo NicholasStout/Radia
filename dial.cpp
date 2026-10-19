@@ -69,4 +69,5 @@ void Dial::createFins(Controller &c)
         f->hide();
         l->addFin(f);
     }
+    l->loadVisible();
 }

@@ -37,15 +37,11 @@ void Fin::paintEvent(QPaintEvent *)
     painter.setPen(Qt::NoPen);
     painter.setBrush(c);
     painter.drawPath(center);
-    //QRectF source(0.0, 0.0, 64, 64);
     QRectF target = center_img(det.ico);
     circle = QPainterPath();
     circle.arcTo(target, 0, 360);
     painter.setClipPath(circle);
     det.ico.paint(&painter, target.toRect());
-    //QString ang_string;
-    //ang_string.setNum(loc_angle);
-    //painter.drawText(target, Qt::AlignCenter, ang_string);
     painter.end();
 }
 
