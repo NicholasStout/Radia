@@ -1,6 +1,5 @@
 #include "dial.h"
 #include "dial_layout.h"
-#include "filehandler.h"
 
 void Dial::setBoundaryAngles(float start, float stop)
 {
@@ -17,6 +16,7 @@ Dial::Dial(IPopulator * pop, QWidget *parent, QRect *size)
     l = new Dial_Layout(this, &fr);
     l->setGeometry(*size);
     setLayout(l);
+    QObject::connect(&fr, &FinRender::redraw, l, &Dial_Layout::redraw);
     //createFins();
 }
 
@@ -27,7 +27,6 @@ void Dial::setPopulator(IPopulator *newPopulator)
 
 bool Dial::handleEvent(QInputEvent *e)
 {
-    //qDebug() << grab;
     bool ret = false;
     if (l->handleEvent(e))
     {
@@ -37,7 +36,7 @@ bool Dial::handleEvent(QInputEvent *e)
         case QEvent::MouseButtonPress:
             grab = true;
             angle = calcAngle(static_cast<QMouseEvent *>(e)->pos(), 500);
-            l->grabAngle = angle;
+            l->setGrabAngle(angle);
             //l->setAngle(static_cast<QMouseEvent *>(e)->pos());
             break;
         case QEvent::MouseButtonRelease:

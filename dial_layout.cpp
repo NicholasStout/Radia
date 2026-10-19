@@ -8,10 +8,11 @@
 Dial_Layout::Dial_Layout(QWidget* parent, FinRender* fr) :
     QLayout(parent)
 {
-
+    right = 0;
+    left = 0;
     rend = fr;
     rend->setAngle(0);
-    rend->setSpan(25);
+    rend->setSpan(20);
     //setGeometry(parent->geometry());
     num_visible = (rend->getStop()-rend->getStart())/(rend->getAngle()+5);
 }
@@ -101,6 +102,7 @@ bool Dial_Layout::canAddFin()
 
 void Dial_Layout::setAngle(QPoint p)
 {
+    stretch = false;
     Fin * leftFin = qobject_cast<Fin *>(list[left]->widget());
     Fin * rightFin = qobject_cast<Fin *>(list[right]->widget());
     float prev = grabAngle;
@@ -110,35 +112,37 @@ void Dial_Layout::setAngle(QPoint p)
         if (rend->getAngle() > 300)
             rend->setAngle(0);
         curr_angle = curr_angle-360;}
+
     float delta = curr_angle-grabAngle;
     if (delta != 0) {
         grabAngle=curr_angle;
         rend->setAngle(rend->getAngle()+delta);
     }
-    qDebug() << rend->getStop();
-    int finAngle = int(rightFin->get_loc_angle())%360;
-    if (int(leftFin->get_loc_angle())%360 >= rend->getStop()+rend->getSpan())
+
+    int rightFinLoc = int(rightFin->get_loc_angle())%360;
+    int leftFinLoc = int(leftFin->get_loc_angle())%360;
+
+    //move the dial left
+    if (leftFinLoc >= rend->getStop()+rend->getSpan())
     {
         if (right > 0 && list.count()>num_visible) {moveLeft();}
-        else {rend->setAngle(rend->getStop() - leftFin->offset);}
-    }
-    else if (finAngle <=rend->getStart()-rend->getSpan())
-    {
-        if (left < list.count()-1&& list.count()>num_visible){moveRight();}
-        else {rend->setAngle(rightFin->offset+1+rend->getStart());}
+        else {stretch = true;}
     }
 
-    for (int i = right; i <= left; i++)
+    //move the dial right
+    else if (rightFinLoc <=rend->getStart()-rend->getSpan())
     {
-        Fin * f = static_cast<Fin *>(list[i]->widget());
-        f->update();
+        if (left < list.count()-1&& list.count()>num_visible){moveRight();}
+        else {stretch = true;}
     }
+    else {stretch = true;}
+
+    redraw();
 }
 
 void Dial_Layout::moveLeft()
 {
-    //qDebug()<<"move left";
-    //qobject_cast<Fin *>(list[left]->widget())->angle=0;
+    stretch = false;
     rend->setAngle(0);
     float back1 = qobject_cast<Fin *>(list[left]->widget())->offset;
     float back2 = 0;
@@ -158,8 +162,7 @@ void Dial_Layout::moveLeft()
 
 void Dial_Layout::moveRight()
 {
-    //qDebug()<<"move right";
-    //qobject_cast<Fin *>(list[right]->widget())->angle=0;
+    stretch = false;
     rend->setAngle(0);
     float back1 = qobject_cast<Fin *>(list[right]->widget())->offset;
     float back2 = 0;
@@ -191,7 +194,7 @@ void Dial_Layout::loadVisible()
         for (left = 1; left <= num; left++)
         {
             Fin * newf = qobject_cast<Fin *>(list[left]->widget());
-            newf->offset =  f->offset + (rend->getSpan());
+            newf->offset =  f->offset + (rend->getSpan())+5;
             newf->show();
             f = newf;
         }
@@ -207,10 +210,41 @@ bool Dial_Layout::handleEvent(QInputEvent *e)
         Fin * f = static_cast<Fin *>(list[i]->widget());
         if(f->handleEvent(e))
         {
+            if (e->type() == QEvent::MouseButtonRelease){release();}
             ret = true;
         }
     }
     return ret;
+}
+
+void Dial_Layout::release()
+{
+    if(stretch)
+    {
+        QPropertyAnimation *anim = new QPropertyAnimation(rend, "angle", this);
+        anim->setDuration(500);
+        anim->setStartValue(rend->getAngle());
+        anim->setEndValue(0);
+        anim->setEasingCurve(QEasingCurve::OutBounce);
+        anim->start(QAbstractAnimation::DeleteWhenStopped);
+    }
+}
+
+void Dial_Layout::setGrabAngle(float newGrabAngle)
+{
+    grabAngle = newGrabAngle;
+}
+
+void Dial_Layout::redraw()
+{
+    if(!list.empty())
+    {
+        for (int i = right; i <= left; i++)
+        {
+            Fin * f = static_cast<Fin *>(list[i]->widget());
+            f->update();
+        }
+    }
 }
 
 

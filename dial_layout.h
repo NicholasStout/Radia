@@ -14,8 +14,8 @@ class Dial_Layout : public QLayout
 //    Q_OBJECT
 public:
     //float angle;
-    float grabAngle;
-    float finAngle;
+    //float grabAngle;
+    //float finAngle;
     bool grab;
 
 
@@ -38,23 +38,19 @@ public:
     QList<QLayoutItem *> list;
     QWidget* p;
     bool handleEvent(QInputEvent *e);
-    float& getAngle() {return finAngle;}
+    void setGrabAngle(float newGrabAngle);
 
 public slots:
-    void setGrab(bool msg);
-    void slide(QMouseEvent* e);
+    void redraw();
 
 private:
-    float grab_angle;
+    bool stretch;
+    float grabAngle;
     int click_angle;
     int res;
     int left, right, num_visible;
-    //float startAng, stopAng;
+    void release();
     FinRender *rend;
-
-    //bool event(QEvent * e);
-    //void mouseMoveEvent(QMouseEvent *event);
-    //bool eventFilter(QObject *object, QEvent *event);
 };
 
 #endif // DIAL_LAYOUT_H

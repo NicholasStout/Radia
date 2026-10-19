@@ -31,11 +31,10 @@ Fin::Fin(QWidget *parent, FinDetails fd, FinRender *fr)
 void Fin::paintEvent(QPaintEvent *)
 {
     make_path();
-    //qDebug() << rend->getAngle();
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     QColor c(127, 0, 127);
-    //painter.setPen(Qt::NoPen);
+    painter.setPen(Qt::NoPen);
     painter.setBrush(c);
     painter.drawPath(center);
     //QRectF source(0.0, 0.0, 64, 64);
@@ -43,7 +42,6 @@ void Fin::paintEvent(QPaintEvent *)
     circle = QPainterPath();
     circle.arcTo(target, 0, 360);
     painter.setClipPath(circle);
-    //qDebug() << det.ico;
     det.ico.paint(&painter, target.toRect());
     //QString ang_string;
     //ang_string.setNum(loc_angle);
@@ -99,7 +97,6 @@ Fin::~Fin(){
 
 bool Fin::handleEvent(QInputEvent *e)
 {
-    //qDebug() << "fin";
     switch (e->type())
     {
     case QEvent::MouseButtonPress:

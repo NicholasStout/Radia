@@ -37,7 +37,6 @@ QLayoutItem *radia_layout::takeAt(int index)
 
 bool radia_layout::handleEvent(QInputEvent *e)
 {
-    //qDebug() << "radia_layout";
     bool ret = false;
     for (auto it = itemList.begin(); it != itemList.end(); ++it)
     {
@@ -52,7 +51,7 @@ bool radia_layout::handleEvent(QInputEvent *e)
 
 void radia_layout::setUpperDial(Dial *d)
 {
-    d->setBoundaryAngles(0, 180);
+    d->setBoundaryAngles(10, 170);
     d->installEventFilter(parent());
     QLayout::addWidget(d);
 
@@ -60,7 +59,7 @@ void radia_layout::setUpperDial(Dial *d)
 
 void radia_layout::setLowerDial(Dial *d)
 {
-    d->setBoundaryAngles(-180, 0);
+    d->setBoundaryAngles(-170, -10);
     d->installEventFilter(parent());
     QLayout::addWidget(d);
 }

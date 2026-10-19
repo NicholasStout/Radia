@@ -78,7 +78,6 @@ void Radia::changeEvent(QEvent * event)
 {
     if (event->type() == QEvent::ActivationChange) {
         if (!this->isActiveWindow()) {
-            //qDebug() << "This fuckin thing is firing";
             QApplication::quit();
         }
     }
@@ -88,7 +87,6 @@ bool Radia::eventFilter(QObject *object, QEvent *event)
 {
     if (auto *e = dynamic_cast<QInputEvent *>(event))
     {
-        //qDebug() << event->type();
         return l->handleEvent(e);
     }
     return false;

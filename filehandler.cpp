@@ -82,7 +82,6 @@ void FileHandler::assessChange(const QString &path)
             db->removeProgram(it);
         }
     }
-    qDebug() << newL.size();
 }
 
 // void FileHandler::increasePopularity(const FinDetails fd)
