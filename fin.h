@@ -51,6 +51,9 @@ public:
     ~Fin();
 
     void showUp();
+    FinDetails getFinDetails() const;
+    void setFinDetails(const FinDetails &newDet);
+
 signals:
     void finSelected(FinDetails det);
     void TogglePin(FinDetails det);

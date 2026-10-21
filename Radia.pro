@@ -49,6 +49,7 @@ HEADERS += \
     dial_layout.h \
     filehandler.h \
     finrender.h \
+    iDial.h \
     input_handler.h \
     ipopulator.h \
     pinnedpopulator.h \

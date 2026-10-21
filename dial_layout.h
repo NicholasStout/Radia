@@ -39,8 +39,9 @@ public:
     QWidget* p;
     bool handleEvent(QInputEvent *e);
     void setGrabAngle(float newGrabAngle);
-
     void setupEffect();
+    void updateList(QList<FinDetails> newList);
+    //~Dial_Layout();
 public slots:
     void redraw();
 

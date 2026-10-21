@@ -71,3 +71,40 @@ void Dial::createFins(Controller &c)
     }
     l->loadVisible();
 }
+
+void Dial::updateFins(Controller * c)
+{
+    QList<FinDetails> finList = populator->populateList();
+    int i = 0;
+    QLayoutItem * item = l->itemAt(i);
+    while(item != nullptr)
+    {
+        Fin *f = static_cast<Fin*>(item->widget());
+        int index = finList.indexOf(f->getFinDetails());
+        qDebug() << index;
+        if(index > -1)
+        {
+            finList.remove(index);
+        }
+        else
+        {
+            f = static_cast<Fin*>(l->takeAt(i)->widget());
+            f->hide();
+            delete f;
+        }
+        i++;
+        item = l->itemAt(i);
+    }
+    QListIterator<FinDetails> it(finList);
+    while(it.hasNext()) {
+        FinDetails deetz = it.next();
+        Fin * f = new Fin(this, deetz, &fr);
+        f->installEventFilter(parent());
+        QObject::connect(f, &Fin::finSelected, c, &Controller::launchProgram);
+        QObject::connect(f, &Fin::TogglePin, c, &Controller::togglePin);
+        f->hide();
+        l->addFin(f);
+    }
+    l->loadVisible();
+    l->redraw();
+}

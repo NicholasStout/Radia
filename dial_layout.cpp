@@ -76,28 +76,18 @@ void Dial_Layout::setupEffect()
         return (degrees - 360.0 * std::floor(degrees / 360.0)) / 360.0;
     };
 
-    //QConicalGradient conGrad;
     conGrad->setStops({});
     conGrad->setColorAt(normalizeAngle(rend->getStart()-5), Qt::transparent);
     conGrad->setColorAt(normalizeAngle(rend->getStart()+rend->getSpan()/4), Qt::black);
-    //conGrad->setColorAt(normalizeAngle(rend->getStart()+5), Qt::transparent);
-    //conGrad->setColorAt(normalizeAngle(rend->getStop()-5), Qt::transparent);
     conGrad->setColorAt(normalizeAngle(rend->getStop()-rend->getSpan()/4), Qt::black);
     conGrad->setColorAt(normalizeAngle(rend->getStop()+5), Qt::transparent);
-    //conGrad->setColorAt(1, Qt::black);
-    //conGrad->setColorAt(0.5, Qt::transparent);
-    //conGrad->setColorAt(0, Qt::black);
-
 }
 
 void Dial_Layout::setSpan(float start, float stop)
 {
     rend->setStart(start);
     rend->setStop(stop);
-    //setupEffect();
-    //qDebug() << rend->getStop();
     num_visible = std::abs(start-stop)/(rend->getSpan()+5);
-    //loadVisible();
 }
 
 QSize Dial_Layout::sizeHint() const
@@ -114,6 +104,8 @@ QLayoutItem *Dial_Layout::itemAt(int index) const
 
 QLayoutItem *Dial_Layout::takeAt(int index)
 {
+    if (index >= list.count())
+        return nullptr;
     return list.takeAt(index);
 }
 
@@ -235,6 +227,10 @@ bool Dial_Layout::handleEvent(QInputEvent *e)
     bool ret = false;
     for (int i = right; i <= left; i++)
     {
+        if (i >= list.count())
+        {
+            return ret;
+        }
         Fin * f = static_cast<Fin *>(list[i]->widget());
         if(f->handleEvent(e))
         {

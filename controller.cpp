@@ -29,5 +29,5 @@ void Controller::togglePin(FinDetails fd)
     {
         db->pinFin(fd);
     }
-    emit updatePinned();
+    emit updatePinned(this);
 }

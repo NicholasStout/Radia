@@ -9,11 +9,8 @@ Database::Database(QObject *parent) : QObject(parent)
     if (name.isEmpty())
         name = qgetenv("USERNAME");
     db = QSqlDatabase::addDatabase("QSQLITE");
-    //db.setHostName("localhost");
-    //db.setDatabaseName("/home/"+name+"/.local/share/Radia/radiadb");
     db.setDatabaseName("radiadb");
-    //db.setUserName(name);
-    //db.setPassword("BingusTingus");
+
     bool ok = db.open();
     if (!ok) {
         qDebug() << "Database error:" << db.lastError().text();
@@ -80,7 +77,7 @@ void Database::pinFin(FinDetails fd)
 void Database::unpinFin(FinDetails fd)
 {
     query.prepare("UPDATE radia SET pinned = 0"
-                  "WHERE path = ?;");
+                  " WHERE path = ?;");
     query.addBindValue(fd.path);
     query.exec();
 }

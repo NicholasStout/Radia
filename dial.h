@@ -5,8 +5,9 @@
 #include "dial_layout.h"
 #include "ipopulator.h"
 #include "controller.h"
+#include "iDial.h"
 
-class Dial : public QWidget
+class Dial : public QWidget, IDial
 {
     Q_OBJECT
 public:
@@ -15,6 +16,9 @@ public:
     void setPopulator(IPopulator *newPopulator);
     bool handleEvent(QInputEvent *e);
     void createFins(Controller &c);
+
+public slots:
+    void updateFins(Controller *c);
 
 private:
     float angle;

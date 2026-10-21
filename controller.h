@@ -12,8 +12,8 @@ public:
     explicit Controller(Database *d, QObject *parent = nullptr);
 
 signals:
-    void updateFinList();
-    void updatePinned();
+    void updateFinList(Controller *);
+    void updatePinned(Controller *);
 
 public slots:
     void launchProgram(FinDetails fd) const;

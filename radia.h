@@ -32,10 +32,6 @@ public:
 
     explicit Radia(QWidget *parent = nullptr);
     void begin_state(std::string * img, std::string * name);
-    //void paintEvent(QPaintEvent *);
-    void mousePressEvent(QMouseEvent * event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
     void changeEvent(QEvent *) override;
     bool eventFilter(QObject *object, QEvent *event) override;
     ~Radia();

@@ -21,15 +21,15 @@ Radia::Radia(QWidget *parent) :
         h+=screen.height();
         w+=screen.width();
     }
-    setMouseTracking(false);
+    //setMouseTracking(false);
     l = new radia_layout(this);
     //setLayout(l);
     QSize size = QSize(w, h);
 
     //Get demensions for the launcher
-
-    QRect start = QRect(QPoint(QCursor::pos().rx()-5,QCursor::pos().ry()-250), size);
-    printf("%d", QCursor::pos().rx());
+    qDebug() << QCursor::pos();
+    QRect start = QRect(QPoint(QCursor::pos().rx()-500,QCursor::pos().ry()-250), size); //TODO: get this to be around the mouse
+    //printf("%d", QCursor::pos().rx());
     setGeometry(start);
     start.setHeight(500);
     setFixedHeight(500);
@@ -44,34 +44,13 @@ Radia::Radia(QWidget *parent) :
     upper = new Dial(pop, this, &start);
     l->setUpperDial(upper);
     upper->createFins(*con);
+    QObject::connect(con, &Controller::updatePinned, upper, &Dial::updateFins);
 
      PinnedPopulator * pin = new PinnedPopulator(db, this);
      lower = new Dial(pin, this, &start);
      l->setLowerDial(lower);
      lower->createFins(*con);
-}
-
-void Radia::mouseMoveEvent(QMouseEvent *event)
-{
-    event->accept();
-    printf("%d,%d\n", event->pos().x(), event->y());
-    repaint();
-}
-
-
-void Radia::mousePressEvent(QMouseEvent *event)
-{
-    qInfo();
-    QApplication::quit();
-}
-
-void Radia::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton)
-    {
-        printf("Mouse release: %d,%d\n", event->x(), event->y());
-        event->ignore();
-    }
+     QObject::connect(con, &Controller::updatePinned, lower, &Dial::updateFins);
 }
 
 void Radia::changeEvent(QEvent * event)

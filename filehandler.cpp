@@ -67,7 +67,7 @@ void FileHandler::assessChange(const QString &path)
     QList<FinDetails> l = db->getAll();
     QList<FinDetails> newL = getDesktopFiles();
 
-    for(auto it : newL)
+    for(const auto &it : std::as_const(newL))
     {
         if(!l.contains(it))
         {
@@ -75,7 +75,7 @@ void FileHandler::assessChange(const QString &path)
         }
     }
 
-    for(auto it : l)
+    for(const auto &it : std::as_const(l))
     {
         if(!newL.contains(it))
         {

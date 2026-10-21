@@ -11,6 +11,16 @@ int Fin::x = 0;
 int Fin::y = 0;
 float Fin::grab_angle = 0;
 
+FinDetails Fin::getFinDetails() const
+{
+    return det;
+}
+
+void Fin::setFinDetails(const FinDetails &newDet)
+{
+    det = newDet;
+}
+
 Fin::Fin(QWidget *parent, FinDetails fd, FinRender *fr)
  : QWidget(parent)
 {
@@ -130,6 +140,8 @@ bool Fin::mousePress(QMouseEvent *event)
     else if (event->button() == Qt::RightButton)
     {
         QPointF p(event->pos().x(), event->pos().y());
+        qDebug() << center.boundingRect();
+        qDebug() << p;
 
         if (center.contains(p))
         {
@@ -173,7 +185,7 @@ bool Fin::mouseRelease(QMouseEvent *event)
     {
         if (rightClicked)
         {
-            qDebug() << "RightClicked";
+            qDebug() << "RightReleased";
             rightClicked = false;
             //startProgram();
             emit TogglePin(det);
