@@ -76,7 +76,7 @@ QRectF Fin::center_img(QIcon img)
     int centeredx = ((res+x)/2)-(size.width()/2);
     int centeredy = ((res+y)/2)-(size.height()/2);
     int i_x = int (r*cos(-rad)+centeredx); //move from radial to cartesian and adjust for placement
-    int i_y = int (r*sin(-rad)+centeredy); //also ajust for finding the upper left corner
+    int i_y = int (r*sin(-rad)+centeredy); //also adjust for finding the upper left corner
     QRectF ret(i_x,i_y,size.width(),size.height());
     return ret;
 }

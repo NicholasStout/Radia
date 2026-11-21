@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QWidget>
 #include "dial.h"
+#include "face.h"
 
 
 class radia_layout : public QLayout
@@ -19,6 +20,7 @@ public:
     bool handleEvent(QInputEvent *e);
     void setUpperDial(Dial* d);
     void setLowerDial(Dial* d);
+    void setFace(Face* f);
     int count() const override;
 
     void passEvent(QEvent *event);

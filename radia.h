@@ -1,15 +1,15 @@
 #ifndef RADIA_H
 #define RADIA_H
 //#include "model.h"
-#include "fin.h"
+//#include "fin.h"
 #include <QMainWindow>
-#include "fin.h"
 #include <QtWidgets>
 #include "dial.h"
 #include "radia_layout.h"
 #include "database.h"
 #include "controller.h"
 #include "filehandler.h"
+#include "iDial.h"
 
 
 
@@ -31,6 +31,7 @@ public:
     //Model * m;
 
     explicit Radia(QWidget *parent = nullptr);
+    void setUpDials(IDial d, Controller c);
     void begin_state(std::string * img, std::string * name);
     void changeEvent(QEvent *) override;
     bool eventFilter(QObject *object, QEvent *event) override;

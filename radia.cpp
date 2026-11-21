@@ -1,6 +1,7 @@
 #include "radia.h"
 #include "pinnedpopulator.h"
 #include "popularitypopulator.h"
+#include "face.h"
 
 /*
  * This class sets up the layouts and handles overarching commands and events
@@ -39,6 +40,9 @@ Radia::Radia(QWidget *parent) :
     db = new Database(this);
     fh = new FileHandler(db, this);
     con = new Controller(db, this);
+    Face * fa = new Face(this);
+
+    l->setFace(fa);
 
     PopularityPopulator* pop = new PopularityPopulator(db, this);
     upper = new Dial(pop, this, &start);

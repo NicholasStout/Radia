@@ -6,6 +6,7 @@
 #include "ipopulator.h"
 #include "controller.h"
 #include "iDial.h"
+#include "iEventHandler.h"
 
 class Dial : public QWidget, IDial
 {
@@ -14,7 +15,7 @@ public:
     void setBoundaryAngles(float start, float stop);
     explicit Dial(IPopulator * pop, QWidget *parent = nullptr, QRect * size = nullptr);
     void setPopulator(IPopulator *newPopulator);
-    bool handleEvent(QInputEvent *e);
+    bool handleEvent(QInputEvent *e) ;
     void createFins(Controller &c);
 
 public slots:

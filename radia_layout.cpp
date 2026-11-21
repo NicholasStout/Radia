@@ -64,6 +64,16 @@ void radia_layout::setLowerDial(Dial *d)
     QLayout::addWidget(d);
 }
 
+void radia_layout::setFace(Face *f)
+{
+    QRect faceGeom(0,0,geometry().width()/2, geometry().height()/2);
+    //faceGeom.setWidth(faceGeom.width()/2);
+    //faceGeom.setHeight(faceGeom.height()/2);
+    f->setGeometry(faceGeom);
+    f->show();
+    addWidget(f);
+}
+
 int radia_layout::count() const
 {
     return itemList.count();

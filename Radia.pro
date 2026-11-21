@@ -30,9 +30,9 @@ SOURCES += \
     database.cpp \
     dial.cpp \
     dial_layout.cpp \
+    face.cpp \
     filehandler.cpp \
     finrender.cpp \
-    input_handler.cpp \
         main.cpp \
     pinnedpopulator.cpp \
     popularitypopulator.cpp \
@@ -47,10 +47,11 @@ HEADERS += \
     database.h \
     dial.h \
     dial_layout.h \
+    face.h \
     filehandler.h \
     finrender.h \
     iDial.h \
-    input_handler.h \
+    iEventHandler.h \
     ipopulator.h \
     pinnedpopulator.h \
     popularitypopulator.h \
